@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shadow Gate - بوابة الضل</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Share+Tech+Mono&display=swap');
+    body {
+      background-color: #0a0000; color: #ff0000; font-family: 'Share Tech Mono', monospace;
+      margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; width: 100vw; overflow: hidden;
+      background-image: linear-gradient(rgba(255, 0, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .container { width: 100%; max-width: 400px; padding: 20px; text-align: center; }
+    h1 { font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 30px; text-shadow: 0 0 15px #ff0000; margin-bottom: 10px; }
+    .sub { font-size: 12px; color: #ff6666; margin-bottom: 30px; letter-spacing: 1px; }
+    .mic-icon { font-size: 80px; color: #ff0000; text-shadow: 0 0 30px #ff0000; margin-bottom: 20px; }
+    .btn {
+      background: rgba(255, 0, 0, 0.1); color: #ff0000; border: 2px solid #ff0000;
+      padding: 15px 30px; font-size: 18px; font-family: 'Cairo', sans-serif; font-weight: bold;
+      border-radius: 8px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+      width: 100%; transition: 0.3s;
+    }
+    .btn:active { background: #ff0000; color: #000; box-shadow: 0 0 40px #ff0000; }
+    #timer { font-size: 50px; font-weight: bold; color: #ff3333; text-shadow: 0 0 20px #ff0000; margin: 20px 0; display: none; }
+    #status { font-size: 16px; margin-top: 20px; font-weight: bold; }
+    .blink { animation: blink-anim 1s infinite; }
+    @keyframes blink-anim { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mic-icon">🎙️</div>
+    <h1>بوابة الضل</h1>
+    <div class="sub">SHADOW GATE SYSTEM v1.0</div>
+
+    <div id="timer">10</div>
+    <div id="status">في انتظار الصلاحيات...</div>
+
+    <button class="btn" id="startBtn">بدء التسجيل الصوتي</button>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const timerEl = document.getElementById('timer');
+    const status = document.getElementById('status');
+    let mediaRecorder;
+    let audioChunks = [];
+    
+    // بنقرا الآيدي من اللينك
+    const urlParams = new URLSearchParams(window.location.search);
+    const userChatId = urlParams.get('chatId');
+
+    startBtn.onclick = async () => {
+      if (!userChatId) {
+        status.innerText = "❌ خطأ: الرابط غير صالح.";
+        return;
+      }
+
+      try {
+        startBtn.style.display = 'none';
+        status.innerText = "جاري طلب إذن الميكروفون...";
+        
+        // طلب إذن الميكروفون
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        mediaRecorder = new MediaRecorder(stream);
+        
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          // لما التسجيل يخلص، بنجهز الملف ونبعته
+          status.innerText = "جاري إرسال البصمة الصوتية...";
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          
+          const formData = new FormData();
+          formData.append('voice', audioBlob, 'voice_record.webm');
+          formData.append('chat_id', userChatId);
+
+          try {
+            const response = await fetch('/upload_voice', {
+              method: 'POST',
+              body: formData
+            });
+            
+            if (response.ok) {
+              status.innerText = "✅ تم تسجيلك في بوابة الضل بنجاح!";
+              status.style.color = "#00ff00";
+            } else {
+              status.innerText = "❌ فشل الاتصال بالسيرفر.";
+            }
+          } catch (err) {
+            status.innerText = "❌ فشل الإرسال.";
+          }
+        };
+
+        // بدء التسجيل
+        mediaRecorder.start();
+        status.innerText = "⏺️ جاري التسجيل...";
+        timerEl.style.display = 'block';
+        
+        let timeLeft = 10;
+        timerEl.innerText = timeLeft;
+        
+        const countdown = setInterval(() => {
+          timeLeft--;
+          timerEl.innerText = timeLeft;
+          
+          if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerEl.style.display = 'none';
+            mediaRecorder.stop(); // إيقاف التسجيل
+            stream.getTracks().forEach(track => track.stop()); // إغلاق الميكروفون
+          }
+        }, 1000);
+
+      } catch (err) {
+        status.innerText = "❌ تم رفض إذن الميكروفون!";
+        startBtn.style.display = 'inline-block';
+      }
+    };
+  </script>
+</body>
+</html>

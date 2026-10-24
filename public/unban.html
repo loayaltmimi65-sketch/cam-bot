@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فك حظر الأرقام | Unban Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #0a0a0a; color: #ffffff; min-height: 100vh; padding: 20px;
+            background-image: radial-gradient(circle at top right, rgba(0, 150, 255, 0.1), transparent 50%), radial-gradient(circle at bottom left, rgba(0, 100, 255, 0.05), transparent 50%);
+        }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
+        
+        .header { text-align: center; margin-bottom: 25px; background: linear-gradient(145deg, #111, #0a0a0a); border-radius: 20px; border: 2px solid #0096ff; box-shadow: 0 0 30px rgba(0, 150, 255, 0.3); overflow: hidden; }
+        .header img { width: 100%; height: auto; display: block; border-radius: 18px 18px 0 0; }
+        .header .header-text { padding: 20px; }
+        .header h1 { font-size: 26px; margin-bottom: 5px; color: #fff; }
+        .header p { font-size: 14px; color: #0096ff; font-weight: bold; }
+
+        .form-box { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; border-radius: 15px; padding: 25px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #aaa; }
+        .input-group input, .input-group select { width: 100%; padding: 14px; background: #0a0a0a; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 15px; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: #0096ff; }
+        
+        .btn { background: linear-gradient(135deg, #0096ff, #0055ff); color: #fff; border: none; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0, 150, 255, 0.4); margin-top: 10px; }
+        .btn:hover { transform: scale(1.02); }
+        .btn:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        .messages-container { display: none; margin-top: 20px; }
+        .messages-container.active { display: block; }
+        .message-card { background: #0a0a0a; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 15px; text-align: left; direction: ltr; font-size: 14px; color: #ddd; line-height: 1.6; position: relative; }
+        .message-card .msg-title { color: #0096ff; font-weight: bold; margin-bottom: 10px; text-align: right; direction: rtl; }
+        .message-card .select-btn { background: #0096ff; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .message-card .select-btn:hover { background: #0055ff; }
+
+        .success-screen { display: none; text-align: center; padding: 30px; }
+        .success-screen.active { display: block; }
+        .success-icon { font-size: 100px; color: #2ecc71; animation: popIn 0.6s ease; margin-bottom: 20px; }
+        .success-text { font-size: 24px; font-weight: bold; color: #2ecc71; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(231, 76, 60, 0.3); }
+        
+        .footer { text-align: center; margin-top: 30px; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://www.image2url.com/r2/default/images/1792878945994-00b7bc62-b4a7-4793-8499-a9c56fe1ad45.png" alt="Unban Banner">
+            <div class="header-text">
+                <h1>فك حظر الأرقام</h1>
+                <p>خدمة استرجاع الحسابات المحظورة</p>
+            </div>
+        </div>
+
+        <div class="form-box">
+            <div id="errorBox" class="error-msg"></div>
+
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> اسمك</label>
+                <input type="text" id="name" placeholder="أدخل اسمك">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-phone"></i> رقمك مع رمز الدولة</label>
+                <input type="tel" id="phone" placeholder="مثال: +967 777777777">
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-exclamation-triangle"></i> نوع الحظر</label>
+                <select id="banType">
+                    <option value="" disabled selected>اختر نوع الحظر...</option>
+                    <option value="انتهاك شروط">انتهاك شروط (Terms of Service Violation)</option>
+                    <option value="تسجيل دخول غير متوفر حالياً">تسجيل دخول غير متوفر (Login Temporarily Unavailable)</option>
+                    <option value="تخمين الكود">تخمين الكود (Code Guessing / Suspicious Activity)</option>
+                    <option value="استخدام واتساب الرسمي">استخدام واتساب الرسمي (Using Unofficial WhatsApp)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label><i class="fab fa-whatsapp"></i> المنصة</label>
+                <select id="platform">
+                    <option value="" disabled selected>اختر المنصة...</option>
+                    <option value="WhatsApp">واتساب</option>
+                    <option value="Messenger">ماسنجر</option>
+                    <option value="WhatsApp Business">واتساب الأعمال</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="generateMessages()">
+                <i class="fas fa-magic"></i> توليد الرسائل
+            </button>
+
+            <div id="messagesContainer" class="messages-container"></div>
+        </div>
+
+        <div id="successScreen" class="success-screen">
+            <i class="fas fa-check-circle success-icon"></i>
+            <div class="success-text">تم فتح تطبيق البريد، يرجى الضغط على إرسال!</div>
+        </div>
+
+        <div class="footer">© 2026 Unban Service. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <script>
+        let selectedMessage = "";
+
+        function generateMessages() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const banType = document.getElementById('banType').value;
+            const platform = document.getElementById('platform').value;
+            const errorBox = document.getElementById('errorBox');
+            const container = document.getElementById('messagesContainer');
+
+            errorBox.style.display = 'none';
+            container.innerHTML = '';
+
+            if (!name) { errorBox.innerText = "❌ يرجى إدخال اسمك!"; errorBox.style.display = 'block'; return; }
+            if (!phone || phone.length < 10) { errorBox.innerText = "❌ يرجى إدخال رقم صحيح مع رمز الدولة!"; errorBox.style.display = 'block'; return; }
+            if (!banType) { errorBox.innerText = "❌ يرجى اختيار نوع الحظر!"; errorBox.style.display = 'block'; return; }
+            if (!platform) { errorBox.innerText = "❌ يرجى اختيار المنصة!"; errorBox.style.display = 'block'; return; }
+
+            // 3 رسائل إنجليزية لكل نوع حظر
+            let templates = [];
+
+            if (banType === "انتهاك شروط") {
+                templates = [
+                    `To ${platform} Support Team,\n\nMy name is ${name}, and my phone number is ${phone}. I am writing to respectfully request the reinstatement of my account.\n\nI recently discovered that my account was banned for a Terms of Service violation. I want to sincerely apologize for any misunderstanding or unintentional breach. I was not aware that my actions could lead to such a consequence.\n\nThis account is vital for staying in touch with my family and friends. I promise to strictly adhere to all policies and terms of service moving forward.\n\nPlease kindly review my case and unban my account.\n\nSincerely,\n${name}\n${phone}`,
+                    
+                    `Dear ${platform} Support,\n\nI am ${name}, the owner of the phone number ${phone}. My account has been suspended due to a Terms of Service violation, and I am reaching out to ask for a second chance.\n\nI acknowledge that I may have accidentally violated a policy without realizing it. I deeply regret any inconvenience this may have caused. I assure you that this was completely unintentional.\n\nI rely on this account for my daily work and communication. I am fully committed to following your guidelines from now on.\n\nI kindly request you to lift the ban on my account.\n\nThank you for your time and understanding.\n\nBest regards,\n${name}\n${phone}`,
+                    
+                    `Respected ${platform} Support Team,\n\nI am writing to you regarding the ban on my account (Phone: ${phone}) due to a Terms of Service Violation.\n\nI would like to formally apologize for any actions that led to this ban. It was never my intention to violate any rules. I understand the importance of your community guidelines and will ensure full compliance.\n\nMy account is essential for my personal and professional communication. I kindly ask you to give me a chance to correct my mistake and reactivate my account.\n\nI look forward to your positive response.\n\nSincerely,\n${name}\n${phone}`
+                ];
+            } else if (banType === "تسجيل دخول غير متوفر حالياً") {
+                templates = [
+                    `To ${platform} Support Team,\n\nMy name is ${name}, and my phone number is ${phone}. I am facing a "Login Temporarily Unavailable" issue and I am unable to access my account.\n\nThis has caused me significant inconvenience as I rely on my account for daily communication. I have always followed the rules and have never engaged in any suspicious activity.\n\nI kindly request you to look into this matter and help me regain access to my account as soon as possible.\n\nThank you for your assistance.\n\nSincerely,\n${name}\n${phone}`,
+                    
+                    `Dear ${platform} Support,\n\nI am ${name}, and my phone number is ${phone}. I am writing to report an issue with my account where it says "Login Temporarily Unavailable."\n\nI believe this might be a technical error or a misunderstanding, as I have not violated any policies. I am a legitimate user and this account is very important to me.\n\nPlease help me restore access to my account. I am ready to provide any information needed to verify my identity.\n\nThank you for your quick response.\n\nBest regards,\n${name}\n${phone}`,
+                    
+                    `Respected ${platform} Support,\n\nI am ${name}, the owner of phone number ${phone}. My account has been temporarily locked, and I cannot log in.\n\nI assure you that I have not done anything against your terms. I kindly ask you to review my case and unlock my account so I can continue using your services.\n\nI appreciate your prompt attention to this matter.\n\nSincerely,\n${name}\n${phone}`
+                ];
+            } else if (banType === "تخمين الكود") {
+                templates = [
+                    `To ${platform} Support Team,\n\nMy name is ${name}, and my phone number is ${phone}. My account was flagged for "Code Guessing" or suspicious activity, and I have been banned.\n\nI want to clarify that this was not intentional. Perhaps someone else tried to access my account, or there was a misunderstanding. I have never shared my verification codes with anyone.\n\nI kindly ask you to review my account activity and lift the ban. I am the rightful owner of this account and I will secure it better in the future.\n\nThank you for your help.\n\nSincerely,\n${name}\n${phone}`,
+                    
+                    `Dear ${platform} Support,\n\nI am ${name}, and my account is linked to ${phone}. I was banned for suspicious activity related to code guessing.\n\nI want to assure you that I am a genuine user. I believe my account may have been compromised or there was a technical glitch. I have not attempted to guess any codes.\n\nPlease help me recover my account. I am willing to verify my identity through any means necessary.\n\nBest regards,\n${name}\n${phone}`,
+                    
+                    `Respected ${platform} Support,\n\nI am ${name}, and my phone number is ${phone}. I received a ban due to "Code Guessing."\n\nThis came as a complete shock to me. I have always used my account responsibly. It is possible that someone tried to access my account without my knowledge. I have now secured my device and account.\n\nI kindly request you to unban my account and give me a chance to continue using your services.\n\nSincerely,\n${name}\n${phone}`
+                ];
+            } else if (banType === "استخدام واتساب الرسمي") {
+                templates = [
+                    `To ${platform} Support Team,\n\nMy name is ${name}, and my phone number is ${phone}. My account was banned for allegedly using an unofficial version of ${platform}.\n\nI want to clarify that I was not aware that the app I was using was unofficial. I downloaded it thinking it was a legitimate version. I have now uninstalled it and will only use the official app.\n\nI sincerely apologize for this mistake. This account is very important to me. Please unban my account.\n\nThank you.\n\nSincerely,\n${name}\n${phone}`,
+                    
+                    `Dear ${platform} Support,\n\nI am ${name}, and my account is associated with ${phone}. I was banned for using an unofficial app.\n\nI want to apologize for my ignorance. I did not know that using a modified version would lead to a ban. I have learned my lesson and will only use the official ${platform} app from now on.\n\nI kindly ask you to lift the ban on my account. I promise to strictly follow all rules.\n\nBest regards,\n${name}\n${phone}`,
+                    
+                    `Respected ${platform} Support,\n\nI am ${name}, and my phone number is ${phone}. I was banned for using an unofficial version of the app.\n\nI sincerely apologize for this. I was unaware of the risks and the policy violation. I have now switched back to the official app and deleted the unofficial one.\n\nI kindly request you to unban my account so I can continue communicating with my contacts.\n\nThank you for your understanding.\n\nSincerely,\n${name}\n${phone}`
+                ];
+            }
+
+            // عرض الرسائل
+            container.classList.add('active');
+            templates.forEach((msg, index) => {
+                const card = document.createElement('div');
+                card.className = 'message-card';
+                card.innerHTML = `
+                    <div class="msg-title">✉️ الرسالة ${index + 1}</div>
+                    <div style="white-space: pre-wrap;">${msg}</div>
+                    <button class="select-btn" onclick="selectMessage(${index})">اختيار هذه الرسالة</button>
+                `;
+                container.appendChild(card);
+                card.dataset.message = msg;
+            });
+
+            // دالة اختيار الرسالة
+            window.selectMessage = function(index) {
+                const cards = document.querySelectorAll('.message-card');
+                const selectedCard = cards[index];
+                selectedMessage = selectedCard.dataset.message;
+                sendEmail();
+            };
+        }
+
+        function sendEmail() {
+            const email = "support@whatsapp.com";
+            const subject = "Account Unban Request";
+            const body = encodeURIComponent(selectedMessage);
+
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+            document.getElementById('successScreen').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('successScreen').classList.remove('active');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

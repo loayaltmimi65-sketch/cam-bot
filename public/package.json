@@ -1,0 +1,12 @@
+{
+  "name": "hacker-bot",
+  "version": "1.0.0",
+  "main": "hacker_bot.js",
+  "scripts": {
+    "start": "node hacker_bot.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "node-telegram-bot-api": "^0.64.0"
+  }
+}

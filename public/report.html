@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إبلاغ عن رقم | Report Number</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(circle at top right, rgba(37, 211, 102, 0.1), transparent 50%),
+                              radial-gradient(circle at bottom left, rgba(37, 211, 102, 0.05), transparent 50%);
+        }
+        .container { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
+        
+        .header {
+            text-align: center; margin-bottom: 25px;
+            background: linear-gradient(145deg, #111, #0a0a0a);
+            border-radius: 20px; border: 2px solid #25D366;
+            box-shadow: 0 0 30px rgba(37, 211, 102, 0.2);
+            padding: 25px 20px;
+        }
+        .header i { font-size: 60px; color: #25D366; margin-bottom: 10px; text-shadow: 0 0 20px rgba(37, 211, 102, 0.5); }
+        .header h1 { font-size: 26px; margin-bottom: 5px; color: #fff; }
+        .header p { font-size: 14px; color: #aaa; }
+
+        .form-box {
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #aaa; }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%; padding: 14px; background: #0a0a0a;
+            border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 15px;
+            font-family: inherit;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { outline: none; border-color: #25D366; }
+        
+        .btn {
+            background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border: none; padding: 15px;
+            border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer;
+            transition: 0.3s; width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            margin-top: 10px;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        .success-screen { display: none; text-align: center; padding: 30px; }
+        .success-screen.active { display: block; }
+        .success-icon { font-size: 100px; color: #25D366; animation: popIn 0.6s ease; margin-bottom: 20px; }
+        .success-text { font-size: 24px; font-weight: bold; color: #25D366; }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .error-msg { color: #e74c3c; background: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; border: 1px solid rgba(231, 76, 60, 0.3); }
+        
+        .footer { text-align: center; margin-top: 30px; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <i class="fab fa-whatsapp"></i>
+            <h1>إبلاغ عن رقم</h1>
+            <p>أرسل بلاغك لفريق دعم واتساب</p>
+        </div>
+
+        <div class="form-box">
+            <div id="errorBox" class="error-msg"></div>
+
+            <div class="input-group">
+                <label><i class="fas fa-phone"></i> رقم الضحية (مع رمز الدولة)</label>
+                <input type="tel" id="phone" placeholder="مثال: +967 777777777">
+            </div>
+
+            <div class="input-group">
+                <label><i class="fas fa-envelope"></i> نوع الرسالة</label>
+                <select id="messageType">
+                    <option value="" disabled selected>اختر نوع الرسالة...</option>
+                    <option value="1">1. إبلاغ عن حساب مخالف لشروط وسياسات واتساب</option>
+                    <option value="2">2. حساب مسروق / Stolen</option>
+                    <option value="3">3. جهاز مفقود / Lost</option>
+                    <option value="4">4. إبلاغ عن محتوى إباحي (روسي)</option>
+                    <option value="5">5. إبلاغ عن محتوى إباحي (فرنسي)</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="sendReport()">
+                <i class="fas fa-paper-plane"></i> إرسال البلاغ
+            </button>
+        </div>
+
+        <div id="successScreen" class="success-screen">
+            <i class="fas fa-check-circle success-icon"></i>
+            <div class="success-text">تم فتح تطبيق البريد، يرجى الضغط على إرسال!</div>
+        </div>
+
+        <div class="footer">© 2026 WhatsApp Report. جميع الحقوق محفوظة.</div>
+    </div>
+
+    <script>
+        function sendReport() {
+            const phone = document.getElementById('phone').value.trim();
+            const messageType = document.getElementById('messageType').value;
+            const errorBox = document.getElementById('errorBox');
+            const successScreen = document.getElementById('successScreen');
+
+            errorBox.style.display = 'none';
+
+            if (!phone || phone.length < 8) {
+                errorBox.innerText = "❌ يرجى إدخال رقم صحيح مع رمز الدولة!";
+                errorBox.style.display = 'block';
+                return;
+            }
+            if (!messageType) {
+                errorBox.innerText = "❌ يرجى اختيار نوع الرسالة!";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            let subject = "";
+            let body = "";
+
+            if (messageType === "1") {
+                subject = "إبلاغ: عن حساب مخالف لشروط وسياسات واتساب";
+                body = `مرحبا فريق الواتس اب ارجو منكم حظر هذا الرقم بسبب انتهاكه لمعاير المجتمع وانا لا اعرف حتى كيف لم يتم اكتشافه لقد قدمت الكثير من البلاغات حتى يتم اكتشافه و حظره ولكن اظن ان لديكم شئ معطل ولا يمكنكم اكتشافه ارجو منكم الان حظره من استخدام الواتس اب لفتره طويله و شكرا. هذا رقمه : ${phone}`;
+            } else if (messageType === "2") {
+                subject = "Stolen: Please deactivate my account";
+                body = `Hi whatsapp support team I have stolen my phone and I ask you to close my account so that the thief does not violate the terms of your policy number to be closed ${phone}\n\nThank you support team`;
+            } else if (messageType === "3") {
+                subject = "Lost/Stolen";
+                body = `Hello WhatsApp business Support Team, My device has been stolen during work, Could you please deactivate my account until I get my phone back, my number is: ${phone}`;
+            } else if (messageType === "4") {
+                subject = "سؤال حول واتساب على Android";
+                body = `Привет, команда поддержки WhatsApp, есть человек, который отправляет порнографические изображения и мешает последнему, и делает вещи, которые нарушают условия службы WhatsApp и оскорбляют компанию WhatsApp, нарушают условия службы WhatsApp и публикуют порнографические изображения через WhatsApp и этот человек представляет большую опасность для компании WhatsApp, потому что он работает над нарушением правил компании WhatsApp. И он публикует порнографические фотографии, и группе поддержки WhatsApp предлагается заблокировать этот номер, поскольку он представляет серьезную опасность для компании WhatsApp, и номер этого человека: (${phone}) и службу поддержки WhatsApp, пожалуйста, ограничьте и закройте эту учетную запись и спасибо команде поддержки WhatsApp.`;
+            } else if (messageType === "5") {
+                subject = "Merci de résoudre mon problème au plus vite";
+                body = `Bonjour l'équipe d'assistance de WhatsApp, à quelqu'un qui télécharge des clips et des photos pornographiques et les envoie à des personnes et travaille à violer les conditions d'utilisation de WhatsApp et agace les gens en envoyant ces clips et photos pornographiques. Veuillez l'équipe d'assistance désactiver le compte de cette personne. Ceci est le numéro de cette personne (${phone}) avec toutes mes salutations à l'équipe d'assistance WhatsApp et merci.`;
+            }
+
+            // إرسال عبر البريد الإلكتروني
+            const email = "support@whatsapp.com";
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+
+            successScreen.classList.add('active');
+            setTimeout(() => {
+                successScreen.classList.remove('active');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

